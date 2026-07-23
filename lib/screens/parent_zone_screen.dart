@@ -19,7 +19,6 @@ class ParentZoneScreen extends StatelessWidget {
     final settings = app.settings;
 
     return GradientScaffold(
-      colors: const [Color(0xFFE8EAF6), SortJoyColors.cream],
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
