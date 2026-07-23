@@ -6,6 +6,7 @@ import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
 import 'theme/sortjoy_theme.dart';
+import 'widgets/sortjoy_background.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,13 @@ class SortJoyApp extends StatelessWidget {
           builder: (context, state, _) {
             if (!state.ready) {
               return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
+                body: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    SortJoyBackground(),
+                    Center(child: CircularProgressIndicator()),
+                  ],
+                ),
               );
             }
             if (!state.onboarded || state.ageWorld == null) {

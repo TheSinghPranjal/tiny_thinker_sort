@@ -6,7 +6,7 @@ import '../../data/indoor_outdoor_data.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../state/app_state.dart';
-import 'indoor_outdoor_background.dart';
+import '../../widgets/sortjoy_background.dart';
 
 Future<void> openIndoorOutdoorGame(BuildContext context) async {
   final app = context.read<AppState>();
@@ -26,7 +26,7 @@ Future<void> openIndoorOutdoorGame(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => SortingPlayScreen(
         config: config,
-        background: const IndoorOutdoorBackground(),
+        background: const SortJoyBackground(),
         title: 'Indoor & Outdoor Games Sort',
       ),
     ),
