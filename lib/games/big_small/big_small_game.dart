@@ -6,7 +6,7 @@ import '../../data/game_catalog.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../state/app_state.dart';
-import 'learning_park_background.dart';
+import '../../widgets/sortjoy_background.dart';
 
 Future<void> openBigSmallGame(BuildContext context) async {
   final app = context.read<AppState>();
@@ -27,7 +27,7 @@ Future<void> openBigSmallGame(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => SortingPlayScreen(
         config: config,
-        background: const LearningParkBackground(),
+        background: const SortJoyBackground(),
         title: 'Big & Small Sort',
       ),
     ),
