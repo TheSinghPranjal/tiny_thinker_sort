@@ -10,6 +10,7 @@ import '../../state/app_state.dart';
 import '../../theme/sortjoy_theme.dart';
 import '../../widgets/celebration_burst.dart';
 import '../../widgets/soft_toast.dart';
+import '../../widgets/sortjoy_background.dart';
 import '../healthy_food/food_bubble_chip.dart';
 import '../healthy_food/toddler_drop_zone.dart';
 import '../../data/healthy_food_data.dart';
@@ -1037,19 +1038,11 @@ class _CelebrationHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFE66D),
-              Color(0xFFFF8FAB),
-              Color(0xFFA78BFA),
-            ],
-          ),
-        ),
-        child: SafeArea(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const SortJoyBackground(),
+          SafeArea(
           child: Stack(
             children: [
               const Positioned.fill(
@@ -1173,6 +1166,7 @@ class _CelebrationHost extends StatelessWidget {
             ],
           ),
         ),
+        ],
       ),
     );
   }
