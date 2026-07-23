@@ -6,7 +6,7 @@ import '../../data/game_catalog.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../state/app_state.dart';
-import 'farm_background.dart';
+import '../../widgets/sortjoy_background.dart';
 
 Future<void> openFruitVegGame(BuildContext context) async {
   final app = context.read<AppState>();
@@ -26,7 +26,7 @@ Future<void> openFruitVegGame(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => SortingPlayScreen(
         config: config,
-        background: const FarmBackground(),
+        background: const SortJoyBackground(),
         title: 'Fruit & Vegetable Sort',
       ),
     ),

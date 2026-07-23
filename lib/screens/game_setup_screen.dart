@@ -27,7 +27,6 @@ class GameSetupScreen extends StatelessWidget {
     final canPlay = game.implemented && app.canPlayGame(game.id);
 
     return GradientScaffold(
-      colors: const [Color(0xFFFFE0B2), SortJoyColors.skyBottom],
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
