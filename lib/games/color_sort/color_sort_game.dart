@@ -6,7 +6,7 @@ import '../../data/game_catalog.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../state/app_state.dart';
-import 'classroom_background.dart';
+import '../../widgets/sortjoy_background.dart';
 
 Future<void> openColorSortGame(BuildContext context) async {
   final app = context.read<AppState>();
@@ -27,7 +27,7 @@ Future<void> openColorSortGame(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => SortingPlayScreen(
         config: config,
-        background: const ClassroomBackground(),
+        background: const SortJoyBackground(),
         title: 'Color Sort',
       ),
     ),
