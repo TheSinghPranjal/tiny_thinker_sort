@@ -525,61 +525,68 @@ class _DropBasketState extends State<_DropBasket>
               label: widget.category.label,
               count: widget.count,
             )
-          : AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        height: 132,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              color.withValues(alpha: 0.95),
-              color.withValues(alpha: 0.75),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(
-            color: widget.glow ? SortJoyColors.glow : Colors.white70,
-            width: widget.glow ? 4 : 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: widget.glow ? 0.55 : 0.28),
-              blurRadius: widget.glow ? 28 : 14,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.emojiOverride ?? widget.category.emoji,
-              style: const TextStyle(fontSize: 42),
-            ),
-            const SizedBox(height: 4),
-                      Text(
-                        widget.category.label,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
-                          shadows: [Shadow(blurRadius: 4, color: Colors.black26)],
-                        ),
+          : Container(
+              decoration: BoxDecoration(
+                color: Color.lerp(color, Colors.black, 0.2),
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: widget.glow ? 0.45 : 0.2),
+                    blurRadius: widget.glow ? 24 : 12,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: const EdgeInsets.only(bottom: 6),
+                height: 126,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      color.withValues(alpha: 0.98),
+                      color.withValues(alpha: 0.85),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: widget.glow ? SortJoyColors.glow : Colors.white70,
+                    width: widget.glow ? 4 : 2,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.emojiOverride ?? widget.category.emoji,
+                      style: const TextStyle(fontSize: 42),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.category.label,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        shadows: [Shadow(blurRadius: 4, color: Colors.black26)],
                       ),
-            Text(
-              '${widget.count}',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontWeight: FontWeight.w700,
+                    ),
+                    Text(
+                      '${widget.count}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

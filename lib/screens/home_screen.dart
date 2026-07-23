@@ -159,91 +159,116 @@ class _LearningPathCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [SortJoyColors.lavender, SortJoyColors.berry],
-        ),
+        color: SortJoyColors.berry.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Row(
-        children: [
-          const Text('🗺', style: TextStyle(fontSize: 36)),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Sort Journey',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'Guided path through your age world',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [SortJoyColors.lavender, SortJoyColors.berry],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Text(
-              'Premium\ncoming soon',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+        ),
+        child: Row(
+          children: [
+            const Text('🗺', style: TextStyle(fontSize: 36)),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sort Journey',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    'Guided path through your age world',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Text(
+                'Premium\ncoming soon',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _GameCard extends StatelessWidget {
+class _GameCard extends StatefulWidget {
   const _GameCard({required this.game});
 
   final GameDefinition game;
 
   @override
+  State<_GameCard> createState() => _GameCardState();
+}
+
+class _GameCardState extends State<_GameCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final remaining = app.remainingPlays(game.id);
+    final remaining = app.remainingPlays(widget.game.id);
 
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(24),
-      elevation: 0,
-      shadowColor: Colors.black12,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(24),
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => GameSetupScreen(game: game)),
-          );
-        },
-        child: Container(
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => GameSetupScreen(game: widget.game)),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFD1D5DB),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          transform: Matrix4.translationValues(0, _isPressed ? 0 : -6, 0),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: _isPressed ? const Color(0xFFE5E7EB) : const Color(0xFFF3F4F6),
+              width: 1.5,
+            ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
+              if (!_isPressed)
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
             ],
           ),
           child: Column(
@@ -251,9 +276,9 @@ class _GameCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(game.emoji, style: const TextStyle(fontSize: 36)),
+                  Text(widget.game.emoji, style: const TextStyle(fontSize: 36)),
                   const Spacer(),
-                  if (!game.implemented)
+                  if (!widget.game.implemented)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -284,7 +309,7 @@ class _GameCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                game.title,
+                widget.game.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -294,7 +319,7 @@ class _GameCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                game.subtitle,
+                widget.game.subtitle,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
