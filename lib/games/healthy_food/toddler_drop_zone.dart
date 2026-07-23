@@ -86,113 +86,122 @@ class _ToddlerDropZoneState extends State<ToddlerDropZone>
   Widget _buildCard(double blinkScale, double wave) {
     final color = Color(widget.category.color);
     final reaction = widget.reaction;
+    final depthColor = Color.lerp(color, Colors.black, 0.2)!;
 
     return AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         height: 148,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              color.withValues(alpha: 0.95),
-              color.withValues(alpha: widget.isHealthyHero ? 0.72 : 0.78),
-            ],
-          ),
+          color: depthColor,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(
-            color: widget.glow ? SortJoyColors.glow : Colors.white.withValues(alpha: 0.85),
-            width: widget.glow ? 4 : 2.5,
-          ),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: widget.glow ? 0.55 : 0.28),
-              blurRadius: widget.glow ? 28 : 14,
+              color: color.withValues(alpha: widget.glow ? 0.45 : 0.2),
+              blurRadius: widget.glow ? 24 : 10,
               offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.bottomCenter,
-          children: [
-            Positioned(
-              top: 8,
-              child: Text(
-                widget.category.emoji,
-                style: const TextStyle(fontSize: 28),
-              ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          margin: const EdgeInsets.only(bottom: 6),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                color.withValues(alpha: 0.98),
+                color.withValues(alpha: widget.isHealthyHero ? 0.85 : 0.9),
+              ],
             ),
-            Positioned(
-              bottom: 36,
-              child: _ToddlerFace(
-                blinkScale: blinkScale,
-                waveAngle: wave / 60,
-                isHealthyHero: widget.isHealthyHero,
-                reaction: reaction,
-              ),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: widget.glow ? SortJoyColors.glow : Colors.white.withValues(alpha: 0.85),
+              width: widget.glow ? 4 : 2.5,
             ),
-            Positioned(
-              bottom: 8,
-              left: 8,
-              right: 8,
-              child: Column(
-                children: [
-                  Text(
-                    widget.category.label,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                      shadows: [Shadow(blurRadius: 4, color: Colors.black26)],
-                    ),
-                  ),
-                  Text(
-                    '${widget.count}',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (widget.isHealthyHero)
+          ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.bottomCenter,
+            children: [
               Positioned(
-                left: 12,
-                bottom: 52,
-                child: Text('🍎', style: TextStyle(fontSize: 16 + sin(_idle.value * pi) * 2)),
+                top: 8,
+                child: Text(
+                  widget.category.emoji,
+                  style: const TextStyle(fontSize: 28),
+                ),
               ),
-            if (reaction == 'confused')
               Positioned(
-                top: -8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
+                bottom: 36,
+                child: _ToddlerFace(
+                  blinkScale: blinkScale,
+                  waveAngle: wave / 60,
+                  isHealthyHero: widget.isHealthyHero,
+                  reaction: reaction,
+                ),
+              ),
+              Positioned(
+                bottom: 8,
+                left: 8,
+                right: 8,
+                child: Column(
+                  children: [
+                    Text(
+                      widget.category.label,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        shadows: [Shadow(blurRadius: 4, color: Colors.black26)],
                       ),
-                    ],
-                  ),
-                  child: const Text(
-                    'Not this one!',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12,
-                      color: SortJoyColors.inkSoft,
+                    ),
+                    Text(
+                      '${widget.count}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (widget.isHealthyHero)
+                Positioned(
+                  left: 12,
+                  bottom: 52,
+                  child: Text('🍎', style: TextStyle(fontSize: 16 + sin(_idle.value * pi) * 2)),
+                ),
+              if (reaction == 'confused')
+                Positioned(
+                  top: -8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Not this one!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        color: SortJoyColors.inkSoft,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
     );
   }
