@@ -8,6 +8,7 @@ import '../state/app_state.dart';
 import '../theme/sortjoy_theme.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/sortjoy_logo.dart';
+import '../widgets/switch_button.dart';
 import 'game_setup_screen.dart';
 import 'parent_zone_screen.dart';
 
@@ -102,9 +103,8 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    TextButton(
+                    SwitchButton(
                       onPressed: () => _openParentGate(context),
-                      child: const Text('Switch'),
                     ),
                   ],
                 ),
