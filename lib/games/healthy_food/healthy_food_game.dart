@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/game_catalog.dart';
 import '../../data/healthy_food_data.dart';
-import '../../widgets/sortjoy_background.dart';
+import '../../widgets/app_background.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../state/app_state.dart';
@@ -61,7 +61,7 @@ Future<void> openHealthyFoodGame(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => SortingPlayScreen(
         config: config,
-        background: const SortJoyBackground(),
+        background: const AppBackground(),
         title: 'Learn to Sort',
       ),
     ),
