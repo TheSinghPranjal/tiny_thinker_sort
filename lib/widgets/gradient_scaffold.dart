@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'sortjoy_background.dart';
+import 'app_background.dart';
 
 class GradientScaffold extends StatelessWidget {
   const GradientScaffold({
@@ -16,7 +16,7 @@ class GradientScaffold extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const SortJoyBackground(),
+          const AppBackground(),
           child,
         ],
       ),
