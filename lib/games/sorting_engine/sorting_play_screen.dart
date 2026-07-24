@@ -10,7 +10,7 @@ import '../../state/app_state.dart';
 import '../../theme/sortjoy_theme.dart';
 import '../../widgets/celebration_burst.dart';
 import '../../widgets/soft_toast.dart';
-import '../../widgets/sortjoy_background.dart';
+import '../../widgets/app_background.dart';
 import '../healthy_food/food_bubble_chip.dart';
 import '../healthy_food/toddler_drop_zone.dart';
 import '../../data/healthy_food_data.dart';
@@ -1048,7 +1048,7 @@ class _CelebrationHost extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const SortJoyBackground(),
+          const AppBackground(),
           SafeArea(
           child: Stack(
             children: [

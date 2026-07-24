@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// SortJoy visual language — bright, rounded, TinyThink-like polish.
 abstract final class SortJoyColors {
@@ -39,14 +40,14 @@ abstract final class SortJoyTheme {
     );
 
     return base.copyWith(
-      textTheme: base.textTheme.apply(
+      textTheme: GoogleFonts.baloo2TextTheme(base.textTheme).apply(
         bodyColor: SortJoyColors.ink,
         displayColor: SortJoyColors.ink,
       ).copyWith(
-        displayLarge: base.textTheme.displayLarge?.copyWith(fontWeight: FontWeight.w900),
-        headlineMedium: base.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-        titleLarge: base.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-        labelLarge: base.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800),
+        displayLarge: GoogleFonts.baloo2(fontWeight: FontWeight.w800),
+        headlineMedium: GoogleFonts.baloo2(fontWeight: FontWeight.w800),
+        titleLarge: GoogleFonts.baloo2(fontWeight: FontWeight.w800),
+        labelLarge: GoogleFonts.baloo2(fontWeight: FontWeight.w800),
       ),
       appBarTheme: const AppBarTheme(
         elevation: 0,
@@ -68,7 +69,7 @@ abstract final class SortJoyTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
-          textStyle: const TextStyle(
+          textStyle: GoogleFonts.baloo2(
             fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
