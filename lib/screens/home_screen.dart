@@ -5,8 +5,10 @@ import '../data/game_catalog.dart';
 import '../models/age_world.dart';
 import '../models/game_definition.dart';
 import '../state/app_state.dart';
+import '../data/game_card_assets.dart';
 import '../theme/sortjoy_theme.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/game_card.dart';
 import '../widgets/sortjoy_logo.dart';
 import '../widgets/switch_button.dart';
 import 'game_setup_screen.dart';
@@ -126,9 +128,9 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 14,
+                  mainAxisSpacing: 18,
                   crossAxisSpacing: 14,
-                  childAspectRatio: 0.92,
+                  childAspectRatio: 0.72,
                 ),
                 itemCount: games.length,
                 itemBuilder: (context, index) {
@@ -220,118 +222,35 @@ class _LearningPathCard extends StatelessWidget {
   }
 }
 
-class _GameCard extends StatefulWidget {
+class _GameCard extends StatelessWidget {
   const _GameCard({required this.game});
 
   final GameDefinition game;
 
   @override
-  State<_GameCard> createState() => _GameCardState();
-}
-
-class _GameCardState extends State<_GameCard> {
-  bool _isPressed = false;
-
-  @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final remaining = app.remainingPlays(widget.game.id);
+    final remaining = app.remainingPlays(game.id);
 
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
+    final badge = !game.implemented
+        ? 'Soon'
+        : app.settings.isPremium
+            ? ''
+            : '$remaining left';
+
+    return PressableGameCard(
+      image: GameCardAssets.imageFor(game.id),
+      title: game.title,
+      subtitle: game.subtitle,
+      badge: badge,
+      badgeColor: GameCardAssets.badgeColorFor(game.id),
+      titleColor: GameCardAssets.titleColorFor(game.id),
+      placeholderEmoji: game.emoji,
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => GameSetupScreen(game: widget.game)),
+          MaterialPageRoute(builder: (_) => GameSetupScreen(game: game)),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFD1D5DB),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
-          transform: Matrix4.translationValues(0, _isPressed ? 0 : -6, 0),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: _isPressed ? const Color(0xFFE5E7EB) : const Color(0xFFF3F4F6),
-              width: 1.5,
-            ),
-            boxShadow: [
-              if (!_isPressed)
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(widget.game.emoji, style: const TextStyle(fontSize: 36)),
-                  const Spacer(),
-                  if (!widget.game.implemented)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: SortJoyColors.lemon.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Soon',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    )
-                  else if (!app.settings.isPremium)
-                    Text(
-                      '$remaining left',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: SortJoyColors.inkSoft,
-                      ),
-                    ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                widget.game.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 15,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                widget.game.subtitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: SortJoyColors.inkSoft,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
