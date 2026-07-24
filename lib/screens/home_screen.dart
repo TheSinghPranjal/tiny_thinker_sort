@@ -25,116 +25,134 @@ class HomeScreen extends StatelessWidget {
 
     return GradientScaffold(
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SortJoyLogo(height: 40),
-                        SizedBox(height: 4),
-                        Text(
-                          'Sparkles, smiles, zero scolding',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: SortJoyColors.inkSoft,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  _RewardPill(
-                    emoji: '🪙',
-                    value: '${app.rewards.coins}',
-                  ),
-                  const SizedBox(width: 8),
-                  _RewardPill(
-                    emoji: '⭐',
-                    value: '${app.rewards.stars}',
-                  ),
-                  IconButton(
-                    tooltip: 'Parent Zone',
-                    onPressed: () => _openParentGate(context),
-                    icon: const Icon(Icons.family_restroom_rounded),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
                 child: Row(
                   children: [
-                    Text(world.emoji, style: const TextStyle(fontSize: 36)),
-                    const SizedBox(width: 12),
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          SortJoyLogo(height: 40),
+                          SizedBox(height: 4),
                           Text(
-                            world.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            '${world.ageLabel} · streak ${app.rewards.dailyStreak}🔥',
-                            style: const TextStyle(
-                              color: SortJoyColors.inkSoft,
+                            'Sparkles, smiles, zero scolding',
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
+                              color: SortJoyColors.inkSoft,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SwitchButton(
+                    _RewardPill(
+                      emoji: '🪙',
+                      value: '${app.rewards.coins}',
+                    ),
+                    const SizedBox(width: 8),
+                    _RewardPill(
+                      emoji: '⭐',
+                      value: '${app.rewards.stars}',
+                    ),
+                    IconButton(
+                      tooltip: 'Parent Zone',
                       onPressed: () => _openParentGate(context),
+                      icon: const Icon(Icons.family_restroom_rounded),
                     ),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _LearningPathCard(),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
-              child: Text(
-                'Games',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Text(world.emoji, style: const TextStyle(fontSize: 36)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              world.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              '${world.ageLabel} · streak ${app.rewards.dailyStreak}🔥',
+                              style: const TextStyle(
+                                color: SortJoyColors.inkSoft,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SwitchButton(
+                        onPressed: () => _openParentGate(context),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 18,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 0.72,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _LearningPathCard(),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Text(
+                  'Games',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
                 ),
-                itemCount: games.length,
-                itemBuilder: (context, index) {
-                  return _GameCard(game: games[index]);
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+              sliver: SliverLayoutBuilder(
+                builder: (context, constraints) {
+                  final width = constraints.crossAxisExtent;
+                  final isTablet = width >= 700;
+                  final crossAxisCount = isTablet ? 4 : 2;
+                  final spacing = isTablet ? 16.0 : 14.0;
+
+                  return SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 18,
+                      crossAxisSpacing: spacing,
+                      // Taller cells so image + 2-line title/subtitle fit.
+                      childAspectRatio: isTablet ? 0.72 : 0.68,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => _GameCard(game: games[index]),
+                      childCount: games.length,
+                    ),
+                  );
                 },
               ),
             ),

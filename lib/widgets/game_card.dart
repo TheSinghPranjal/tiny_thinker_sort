@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Premium toy-like game card — drop in artwork via [image] path.
+/// Soft premium kids-app game card (Figma: warm fill, triple shadow, inset art).
 class GameCard extends StatelessWidget {
   const GameCard({
     super.key,
@@ -22,111 +22,117 @@ class GameCard extends StatelessWidget {
   final Color titleColor;
   final String? placeholderEmoji;
 
-  static const _cardBg = Color(0xFFFEFDFA);
-  static const _subtitle = Color(0xFF634E40);
-  static const _radius = 36.0;
-  static const _borderWidth = 6.0;
+  static const _subtitleColor = Color(0xFF5C5145);
 
   @override
   Widget build(BuildContext context) {
-    final innerRadius = _radius - _borderWidth;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(_radius),
-        border: Border.all(color: Colors.white, width: _borderWidth),
-        boxShadow: [
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFFFFDF8),
+            Color(0xFFFFF7EE),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.7),
+          width: 1,
+        ),
+        boxShadow: const [
+          // Main warm shadow
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.14),
+            color: Color(0x1F8A6F4A), // #8A6F4A @ 12%
             blurRadius: 28,
-            spreadRadius: -2,
-            offset: const Offset(0, 14),
+            spreadRadius: -4,
+            offset: Offset(0, 8),
           ),
+          // Soft ambient
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Color(0x14000000), // black @ 8%
+            blurRadius: 42,
+            spreadRadius: -10,
+            offset: Offset(0, 18),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(innerRadius),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Column(
+      child: Stack(
+        children: [
+          // Top-edge highlight (inner shadow Y:1 white 90%)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 58,
                   child: _CardImage(
                     image: image,
                     placeholderEmoji: placeholderEmoji,
                   ),
                 ),
-                Expanded(
-                  flex: 42,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.baloo2(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w800,
-                            height: 1.12,
-                            color: titleColor,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    subtitle,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: 13,
-                                      height: 1.25,
-                                      color: _subtitle,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 2),
-                                child: _DecorIcon(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 32),
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      height: 1.25,
+                      fontWeight: FontWeight.w800,
+                      color: titleColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(right: 32),
+                  child: Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.nunito(
+                      fontSize: 13,
+                      height: 1.3,
+                      fontWeight: FontWeight.w600,
+                      color: _subtitleColor,
                     ),
                   ),
                 ),
               ],
             ),
-            if (badge.isNotEmpty)
-              Positioned(
-                top: 10,
-                right: 10,
-                child: _Badge(text: badge, color: badgeColor),
-              ),
-          ],
-        ),
+          ),
+          const Positioned(
+            right: 12,
+            bottom: 12,
+            child: _DecorIcon(),
+          ),
+          if (badge.isNotEmpty)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: _Badge(text: badge, color: badgeColor),
+            ),
+        ],
       ),
     );
   }
@@ -144,70 +150,83 @@ class _CardImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: Image.asset(
-        image,
-        fit: BoxFit.cover,
-        alignment: Alignment.center,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF9CCDF4),
-                  Color(0xFFA3CC46),
-                ],
-              ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.5),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(17),
+          child: Image.asset(
+            image,
+            fit: BoxFit.cover,
             alignment: Alignment.center,
-            child: Text(
-              placeholderEmoji ?? '🎮',
-              style: const TextStyle(fontSize: 52),
-            ),
-          );
-        },
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF9CCDF4),
+                      Color(0xFFA3CC46),
+                    ],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  placeholderEmoji ?? '🎮',
+                  style: const TextStyle(fontSize: 48),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 }
 
-/// Small decorative flower sticker, bottom-right of the text block.
+/// Decorative flower sticker — bottom-right of the text block.
 class _DecorIcon extends StatelessWidget {
   const _DecorIcon();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 28,
       height: 28,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.16),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: const CustomPaint(painter: _FlowerPainter()),
       ),
-      child: const _FlowerFallback(),
-    );
-  }
-}
-
-class _FlowerFallback extends StatelessWidget {
-  const _FlowerFallback();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(28, 28),
-      painter: _FlowerPainter(),
     );
   }
 }
 
 class _FlowerPainter extends CustomPainter {
+  const _FlowerPainter();
+
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width * 0.48;
@@ -216,7 +235,6 @@ class _FlowerPainter extends CustomPainter {
     final centerPaint = Paint()..color = const Color(0xFFFFC94D);
     final leafPaint = Paint()..color = const Color(0xFF7CBF3A);
 
-    // Leaves
     final leftLeaf = Path()
       ..moveTo(cx - 2, cy + 4)
       ..quadraticBezierTo(cx - 14, cy + 10, cx - 4, cy + 14)
@@ -228,7 +246,6 @@ class _FlowerPainter extends CustomPainter {
     canvas.drawPath(leftLeaf, leafPaint);
     canvas.drawPath(rightLeaf, leafPaint);
 
-    // Petals
     for (var i = 0; i < 5; i++) {
       canvas.save();
       canvas.translate(cx, cy);
@@ -255,25 +272,44 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Prefer Figma blue gradient; fall back to tinted gradient from [color].
+    final isDefaultBlue =
+        color == const Color(0xFF4D82C4) || color == const Color(0xFF4F9EFF);
+
+    final gradient = isDefaultBlue
+        ? const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF4F9EFF), Color(0xFF2F6FEA)],
+          )
+        : LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.lerp(color, Colors.white, 0.25)!,
+              color,
+            ],
+          );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(50),
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(999),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: const Color(0xFF2B60D9).withValues(alpha: 0.18),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Text(
         text,
-        style: GoogleFonts.baloo2(
+        style: GoogleFonts.nunito(
           color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
           height: 1.1,
         ),
       ),
@@ -323,7 +359,7 @@ class _PressableGameCardState extends State<PressableGameCard> {
       child: AnimatedScale(
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
-        scale: _pressed ? 0.96 : 1,
+        scale: _pressed ? 0.97 : 1,
         child: GameCard(
           image: widget.image,
           title: widget.title,
