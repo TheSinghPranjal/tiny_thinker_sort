@@ -1,22 +1,328 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../data/color_school_bags_data.dart';
 import '../data/flower_garden_data.dart';
-import '../data/healthy_food_data.dart';
+import '../data/game_catalog.dart';
+import '../data/sort_socks_data.dart';
 import '../models/age_world.dart';
-import '../models/parent_settings.dart';
+import '../models/game_modes.dart';
+import '../models/rewards.dart';
 import '../state/app_state.dart';
+import '../state/game_settings_store.dart';
 import '../theme/sortjoy_theme.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/parent/game_controls/floating_sort_controls.dart';
+import '../widgets/parent/game_controls/healthy_food_controls.dart';
+import '../widgets/parent/game_controls/match_color_controls.dart';
+import '../widgets/parent/parent_game_settings_card.dart';
+import '../widgets/parent/premium_upsell_card.dart';
 
-class ParentZoneScreen extends StatelessWidget {
-  const ParentZoneScreen({super.key});
+/// Adult-only Parent Zone: child lock → dashboard with per-game controls.
+class ParentZoneScreen extends StatefulWidget {
+  const ParentZoneScreen({
+    super.key,
+    this.expandGameId,
+    this.startUnlocked = false,
+  });
+
+  /// When set, expands that game’s settings card after unlock.
+  final String? expandGameId;
+
+  /// Skip the lock when deep-linking mid-session after an existing unlock flow.
+  final bool startUnlocked;
+
+  @override
+  State<ParentZoneScreen> createState() => _ParentZoneScreenState();
+}
+
+class _ParentZoneScreenState extends State<ParentZoneScreen> {
+  late bool _unlocked;
+
+  @override
+  void initState() {
+    super.initState();
+    _unlocked = widget.startUnlocked;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_unlocked) {
+      return _ParentLockScreen(
+        onUnlocked: () => setState(() => _unlocked = true),
+        onCancel: () => Navigator.pop(context),
+      );
+    }
+    return _ParentDashboard(expandGameId: widget.expandGameId);
+  }
+}
+
+// ── Child lock ───────────────────────────────────────────────────────────────
+
+class _ParentLockScreen extends StatefulWidget {
+  const _ParentLockScreen({
+    required this.onUnlocked,
+    required this.onCancel,
+  });
+
+  final VoidCallback onUnlocked;
+  final VoidCallback onCancel;
+
+  @override
+  State<_ParentLockScreen> createState() => _ParentLockScreenState();
+}
+
+class _ParentLockScreenState extends State<_ParentLockScreen> {
+  late int _a;
+  late int _b;
+  final _controller = TextEditingController();
+  final _random = Random();
+
+  DateTime? _pressStarted;
+  Timer? _pressTimer;
+  double _pressProgress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _newQuestion();
+  }
+
+  @override
+  void dispose() {
+    _pressTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _newQuestion() {
+    setState(() {
+      _a = 2 + _random.nextInt(8); // 2–9
+      _b = 2 + _random.nextInt(8);
+      _controller.clear();
+    });
+  }
+
+  Future<void> _tryAgain() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Try Again'),
+        content: const Text(
+          'That wasn’t quite right. Here’s a fresh question for you.',
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+    _newQuestion();
+  }
+
+  void _submit() {
+    final value = int.tryParse(_controller.text.trim());
+    if (value == _a * _b) {
+      HapticFeedback.mediumImpact();
+      widget.onUnlocked();
+    } else {
+      HapticFeedback.lightImpact();
+      _tryAgain();
+    }
+  }
+
+  void _onLockPressStart() {
+    _pressStarted = DateTime.now();
+    _pressTimer?.cancel();
+    _pressTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
+      final started = _pressStarted;
+      if (started == null) return;
+      final elapsed = DateTime.now().difference(started).inMilliseconds;
+      final progress = (elapsed / 3000).clamp(0.0, 1.0);
+      setState(() => _pressProgress = progress);
+      if (elapsed >= 500 && elapsed % 500 < 60) {
+        HapticFeedback.selectionClick();
+      }
+      if (elapsed >= 3000) {
+        _pressTimer?.cancel();
+        HapticFeedback.heavyImpact();
+        widget.onUnlocked();
+      }
+    });
+  }
+
+  void _onLockPressEnd() {
+    _pressTimer?.cancel();
+    _pressStarted = null;
+    setState(() => _pressProgress = 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GradientScaffold(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton.filledTonal(
+                  onPressed: widget.onCancel,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTapDown: (_) => _onLockPressStart(),
+                onTapUp: (_) => _onLockPressEnd(),
+                onTapCancel: _onLockPressEnd,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: CircularProgressIndicator(
+                        value: _pressProgress,
+                        strokeWidth: 6,
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
+                        color: SortJoyColors.mint,
+                      ),
+                    ),
+                    Container(
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.lock_rounded,
+                        size: 44,
+                        color: SortJoyColors.lavender,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Parents Only',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Solve a quick question, or press and hold the lock for 3 seconds.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: SortJoyColors.inkSoft,
+                ),
+              ),
+              const SizedBox(height: 28),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'What is $_a × $_b?',
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _controller,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      autofocus: true,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Answer',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onSubmitted: (_) => _submit(),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submit,
+                        child: const Text('Unlock'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+
+class _ParentDashboard extends StatefulWidget {
+  const _ParentDashboard({this.expandGameId});
+
+  final String? expandGameId;
+
+  @override
+  State<_ParentDashboard> createState() => _ParentDashboardState();
+}
+
+class _ParentDashboardState extends State<_ParentDashboard> {
+  final Set<String> _expanded = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final id = widget.expandGameId;
+    if (id != null) _expanded.add(id);
+  }
+
+  String _playsLabel(AppState app, String gameId) {
+    if (app.settings.isPremium) return 'Unlimited today';
+    final n = app.playsTodayFor(gameId);
+    final left = app.remainingPlays(gameId);
+    return '$n played · $left left';
+  }
 
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final settings = app.settings;
+    final gs = app.gameSettings;
+    final isPremium = app.settings.isPremium;
+    final games = GameCatalog.withParentControls;
 
     return GradientScaffold(
       child: SafeArea(
@@ -30,20 +336,38 @@ class ParentZoneScreen extends StatelessWidget {
                   icon: const Icon(Icons.close_rounded),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Parent Zone',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+                const Expanded(
+                  child: Text(
+                    'Parent Zone',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 8),
+            const Text(
+              'Calm controls that apply the next time your child starts a game.',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: SortJoyColors.inkSoft,
+              ),
+            ),
             const SizedBox(height: 16),
+            PremiumUpsellCard(
+              isPremium: isPremium,
+              onTogglePremium: (v) => app.setPremium(v),
+            ),
+            const SizedBox(height: 12),
+            _ChildStatsCard(app: app),
+            const SizedBox(height: 12),
             _SectionCard(
               title: 'Age world',
               child: Column(
                 children: [
                   for (final world in AgeWorld.values)
                     ListTile(
-                      leading: Text(world.emoji, style: const TextStyle(fontSize: 28)),
+                      leading:
+                          Text(world.emoji, style: const TextStyle(fontSize: 28)),
                       title: Text(world.title),
                       subtitle: Text(world.ageLabel),
                       trailing: Icon(
@@ -57,534 +381,51 @@ class ParentZoneScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Session',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Duration: ${(settings.sessionSeconds / 60).clamp(1, 30).toStringAsFixed(settings.sessionSeconds < 60 ? 1 : 0)} min '
-                    '(${settings.sessionSeconds}s)',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  Slider(
-                    min: 60,
-                    max: 30 * 60,
-                    divisions: 29,
-                    value: settings.sessionSeconds.clamp(60, 1800).toDouble(),
-                    label: '${(settings.sessionSeconds / 60).round()} min',
-                    onChanged: (v) {
-                      // Allow 1–30 minutes; also keep a quick 60s default via snap near start
-                      final seconds = v.round();
-                      app.updateSettings(settings.copyWith(sessionSeconds: seconds));
-                    },
-                  ),
-                  // Quick presets including default 60s
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      for (final secs in [60, 120, 300, 600, 1800])
-                        ChoiceChip(
-                          label: Text(secs < 120 ? '${secs}s' : '${secs ~/ 60}m'),
-                          selected: settings.sessionSeconds == secs,
-                          onSelected: (_) => app.updateSettings(
-                            settings.copyWith(sessionSeconds: secs),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'On-screen items: ${settings.floatingItemCount}',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  Slider(
-                    min: 2,
-                    max: 8,
-                    divisions: 6,
-                    value: settings.floatingItemCount.toDouble(),
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(floatingItemCount: v.round()),
-                    ),
-                  ),
-                  const Text('Movement speed', style: TextStyle(fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 8),
-                  SegmentedButton<MovementSpeed>(
-                    segments: const [
-                      ButtonSegment(value: MovementSpeed.slow, label: Text('Slow')),
-                      ButtonSegment(value: MovementSpeed.normal, label: Text('Normal')),
-                      ButtonSegment(value: MovementSpeed.fast, label: Text('Fast')),
-                    ],
-                    selected: {settings.speed},
-                    onSelectionChanged: (s) => app.updateSettings(
-                      settings.copyWith(speed: s.first),
-                    ),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 16),
+            const Text(
+              'Game controls',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Feedback',
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: const Text('Voice pronunciation'),
-                    value: settings.voiceEnabled,
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(voiceEnabled: v),
-                    ),
-                  ),
-                  SwitchListTile(
-                    title: const Text('Reward celebrations'),
-                    value: settings.celebrationsEnabled,
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(celebrationsEnabled: v),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Fruit & Vegetable modes',
-              child: Column(
-                children: [
-                  for (final mode in FruitVegMode.values)
-                    ListTile(
-                      title: Text(switch (mode) {
-                        FruitVegMode.mixed => 'Mixed',
-                        FruitVegMode.fruitsOnly => 'Fruits Only',
-                        FruitVegMode.vegetablesOnly => 'Vegetables Only',
-                      }),
-                      trailing: Icon(
-                        settings.fruitVegMode == mode
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(fruitVegMode: mode),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Indoor & Outdoor modes',
-              child: Column(
-                children: [
-                  for (final mode in IndoorOutdoorMode.values)
-                    ListTile(
-                      title: Text(switch (mode) {
-                        IndoorOutdoorMode.mixed => 'Mixed',
-                        IndoorOutdoorMode.indoorOnly => 'Indoor Games Only',
-                        IndoorOutdoorMode.outdoorOnly => 'Outdoor Games Only',
-                      }),
-                      trailing: Icon(
-                        settings.indoorOutdoorMode == mode
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(indoorOutdoorMode: mode),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Color Sort modes',
-              child: Column(
-                children: [
-                  for (final mode in ColorSortMode.values)
-                    ListTile(
-                      title: Text(switch (mode) {
-                        ColorSortMode.mixed => 'Mixed Colors',
-                        ColorSortMode.redOnly => 'Red Only',
-                        ColorSortMode.blueOnly => 'Blue Only',
-                        ColorSortMode.greenOnly => 'Green Only',
-                      }),
-                      trailing: Icon(
-                        settings.colorSortMode == mode
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(colorSortMode: mode),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Big & Small modes',
-              child: Column(
-                children: [
-                  for (final mode in BigSmallMode.values)
-                    ListTile(
-                      title: Text(switch (mode) {
-                        BigSmallMode.mixed => 'Mixed Mode',
-                        BigSmallMode.bigOnly => 'Big Objects Only',
-                        BigSmallMode.smallOnly => 'Small Objects Only',
-                      }),
-                      trailing: Icon(
-                        settings.bigSmallMode == mode
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(bigSmallMode: mode),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Color School Bags',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Unlimited play time'),
-                    subtitle: const Text('Default for toddlers — no timer'),
-                    value: settings.colorSchoolBagsUnlimitedTime,
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(colorSchoolBagsUnlimitedTime: v),
-                    ),
-                  ),
-                  if (!settings.colorSchoolBagsUnlimitedTime) ...[
-                    Text(
-                      'Duration: ${_formatSchoolBagsDuration(settings.colorSchoolBagsSessionSeconds)}',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final secs in ParentSettings.colorSchoolBagsSessionPresets
-                            .where((s) => s > 0))
-                          ChoiceChip(
-                            label: Text(_formatSchoolBagsDuration(secs)),
-                            selected: settings.colorSchoolBagsSessionSeconds == secs,
-                            onSelected: (_) => app.updateSettings(
-                              settings.copyWith(colorSchoolBagsSessionSeconds: secs),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  const Text(
-                    'Difficulty (backpacks per round)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 8),
-                  for (final level in ColorSchoolBagsDifficulty.values)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(switch (level) {
-                        ColorSchoolBagsDifficulty.level2 => 'Level 1 · 2 backpacks',
-                        ColorSchoolBagsDifficulty.level3 => 'Level 2 · 3 backpacks',
-                        ColorSchoolBagsDifficulty.level4 => 'Level 3 · 4 backpacks',
-                        ColorSchoolBagsDifficulty.level5 => 'Advanced · 5 backpacks',
-                        ColorSchoolBagsDifficulty.level6 => 'Advanced · 6 backpacks',
-                      }),
-                      trailing: Icon(
-                        settings.colorSchoolBagsDifficulty == level
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(colorSchoolBagsDifficulty: level),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Available colors (at least 2)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 0,
-                    children: [
-                      for (final colorId in ColorSchoolBagsData.allColorIds)
-                        FilterChip(
-                          label: Text(ColorSchoolBagsData.displayName(colorId)),
-                          selected: settings.colorSchoolBagsEnabledColors.contains(colorId),
-                          onSelected: (selected) {
-                            final next = List<String>.from(
-                              settings.colorSchoolBagsEnabledColors,
-                            );
-                            if (selected) {
-                              if (!next.contains(colorId)) next.add(colorId);
-                            } else if (next.length > 2) {
-                              next.remove(colorId);
-                            }
-                            app.updateSettings(
-                              settings.copyWith(colorSchoolBagsEnabledColors: next),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Flower Garden',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Unlimited play time'),
-                    subtitle: const Text('Default for toddlers — no timer'),
-                    value: settings.flowerGardenUnlimitedTime,
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(flowerGardenUnlimitedTime: v),
-                    ),
-                  ),
-                  if (!settings.flowerGardenUnlimitedTime) ...[
-                    Text(
-                      'Duration: ${_formatSchoolBagsDuration(settings.flowerGardenSessionSeconds)}',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final secs in ParentSettings.flowerGardenSessionPresets
-                            .where((s) => s > 0))
-                          ChoiceChip(
-                            label: Text(_formatSchoolBagsDuration(secs)),
-                            selected: settings.flowerGardenSessionSeconds == secs,
-                            onSelected: (_) => app.updateSettings(
-                              settings.copyWith(flowerGardenSessionSeconds: secs),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  const Text(
-                    'Difficulty (flower pots)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 8),
-                  for (final level in FlowerGardenDifficulty.values)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(switch (level) {
-                        FlowerGardenDifficulty.level2 => 'Level 1 · 2 colors',
-                        FlowerGardenDifficulty.level3 => 'Level 2 · 3 colors',
-                        FlowerGardenDifficulty.level4 => 'Level 3 · 4 colors',
-                        FlowerGardenDifficulty.level5 => 'Level 4 · 5 colors',
-                      }),
-                      trailing: Icon(
-                        settings.flowerGardenDifficulty == level
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(flowerGardenDifficulty: level),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Flower colors (at least 2)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 0,
-                    children: [
-                      for (final colorId in FlowerGardenData.allColorIds)
-                        FilterChip(
-                          label: Text(FlowerGardenData.displayName(colorId)),
-                          selected: settings.flowerGardenEnabledColors.contains(colorId),
-                          onSelected: (selected) {
-                            final next = List<String>.from(
-                              settings.flowerGardenEnabledColors,
-                            );
-                            if (selected) {
-                              if (!next.contains(colorId)) next.add(colorId);
-                            } else if (next.length > 2) {
-                              next.remove(colorId);
-                            }
-                            app.updateSettings(
-                              settings.copyWith(flowerGardenEnabledColors: next),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Learn to Sort — Healthy Food',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Unlimited play time'),
-                    subtitle: const Text('Default for toddlers — no timer'),
-                    value: settings.healthyFoodUnlimitedTime,
-                    onChanged: (v) => app.updateSettings(
-                      settings.copyWith(healthyFoodUnlimitedTime: v),
-                    ),
-                  ),
-                  if (!settings.healthyFoodUnlimitedTime) ...[
-                    Text(
-                      'Duration: ${_formatSchoolBagsDuration(settings.healthyFoodSessionSeconds)}',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final secs in ParentSettings.healthyFoodSessionPresets
-                            .where((s) => s > 0))
-                          ChoiceChip(
-                            label: Text(_formatSchoolBagsDuration(secs)),
-                            selected: settings.healthyFoodSessionSeconds == secs,
-                            onSelected: (_) => app.updateSettings(
-                              settings.copyWith(healthyFoodSessionSeconds: secs),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  const Text(
-                    'Difficulty',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 8),
-                  for (final level in HealthyFoodDifficulty.values)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(switch (level) {
-                        HealthyFoodDifficulty.beginner =>
-                          'Beginner · Apple, Banana, Burger, Pizza',
-                        HealthyFoodDifficulty.easy => 'Easy · 6 foods',
-                        HealthyFoodDifficulty.medium => 'Medium · 10 foods',
-                        HealthyFoodDifficulty.advanced =>
-                          'Advanced · all enabled foods',
-                      }),
-                      trailing: Icon(
-                        settings.healthyFoodDifficulty == level
-                            ? Icons.check_circle_rounded
-                            : Icons.circle_outlined,
-                        color: SortJoyColors.mint,
-                      ),
-                      onTap: () => app.updateSettings(
-                        settings.copyWith(healthyFoodDifficulty: level),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Healthy foods (at least 4)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 0,
-                    children: [
-                      for (final foodId in HealthyFoodData.allHealthyIds)
-                        FilterChip(
-                          label: Text(HealthyFoodData.displayName(foodId)),
-                          selected: settings.healthyFoodEnabledHealthyIds
-                              .contains(foodId),
-                          onSelected: (selected) {
-                            final next = List<String>.from(
-                              settings.healthyFoodEnabledHealthyIds,
-                            );
-                            if (selected) {
-                              if (!next.contains(foodId)) next.add(foodId);
-                            } else if (next.length > 4) {
-                              next.remove(foodId);
-                            }
-                            app.updateSettings(
-                              settings.copyWith(
-                                healthyFoodEnabledHealthyIds: next,
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Junk foods (at least 4)',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 0,
-                    children: [
-                      for (final foodId in HealthyFoodData.allJunkIds)
-                        FilterChip(
-                          label: Text(HealthyFoodData.displayName(foodId)),
-                          selected:
-                              settings.healthyFoodEnabledJunkIds.contains(foodId),
-                          onSelected: (selected) {
-                            final next = List<String>.from(
-                              settings.healthyFoodEnabledJunkIds,
-                            );
-                            if (selected) {
-                              if (!next.contains(foodId)) next.add(foodId);
-                            } else if (next.length > 4) {
-                              next.remove(foodId);
-                            }
-                            app.updateSettings(
-                              settings.copyWith(healthyFoodEnabledJunkIds: next),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _SectionCard(
-              title: 'Premium',
-              child: SwitchListTile(
-                title: const Text('Premium (dev toggle)'),
-                subtitle: const Text('Unlimited plays · deeper controls'),
-                value: settings.isPremium,
-                onChanged: (v) => app.updateSettings(
-                  settings.copyWith(isPremium: v),
+            const SizedBox(height: 8),
+            for (final game in games) ...[
+              ParentGameSettingsCard(
+                emoji: game.emoji,
+                title: game.title,
+                subtitle: game.subtitle,
+                sessionSeconds: gs.sessionSecondsFor(game.id),
+                includeInLearningPath: gs.includeInLearningPath(game.id),
+                playsTodayLabel: _playsLabel(app, game.id),
+                isPremium: isPremium,
+                expanded: _expanded.contains(game.id),
+                initiallyHighlight: widget.expandGameId == game.id,
+                onExpansionChanged: (open) {
+                  setState(() {
+                    if (open) {
+                      _expanded.add(game.id);
+                    } else {
+                      _expanded.remove(game.id);
+                    }
+                  });
+                },
+                onSessionSecondsChanged: (secs) =>
+                    gs.setSessionSeconds(game.id, secs),
+                onLearningPathChanged: (v) => gs.patchCommon(
+                  game.id,
+                  (c) => c.copyWith(includeInLearningPath: v),
                 ),
+                controlsChild: _controlsFor(game.id, gs),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
+            ],
             _SectionCard(
               title: 'Progress',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('XP ${app.rewards.xp} · Badges ${app.rewards.badges.length}'),
+                  Text(
+                    'Level ${app.profileLevel} · XP ${app.rewards.xp} · '
+                    'Badges ${app.rewards.badges.length}',
+                  ),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () async {
@@ -614,17 +455,328 @@ class ParentZoneScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
     );
   }
+
+  Widget _controlsFor(String gameId, GameSettingsStore store) {
+    switch (gameId) {
+      case GameCatalog.fruitVegId:
+        final s = store.fruitVeg;
+        return FloatingSortControls(
+          common: s.common,
+          floatingItemCount: s.floatingItemCount,
+          speed: s.speed,
+          floatingAnimation: s.floatingAnimation,
+          modeLabel: 'Sort mode',
+          modeOptions: const ['Mixed', 'Fruits only', 'Vegetables only'],
+          selectedModeIndex: FruitVegMode.values.indexOf(s.mode),
+          onCommonChanged: (c) =>
+              store.patchFruitVeg((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) =>
+              store.patchFruitVeg((x) => x.copyWith(floatingItemCount: n)),
+          onSpeedChanged: (sp) =>
+              store.patchFruitVeg((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) =>
+              store.patchFruitVeg((x) => x.copyWith(floatingAnimation: v)),
+          onModeIndexChanged: (i) =>
+              store.patchFruitVeg((x) => x.copyWith(mode: FruitVegMode.values[i])),
+        );
+      case GameCatalog.indoorOutdoorId:
+        final s = store.indoorOutdoor;
+        return FloatingSortControls(
+          common: s.common,
+          floatingItemCount: s.floatingItemCount,
+          speed: s.speed,
+          floatingAnimation: s.floatingAnimation,
+          modeLabel: 'Sort mode',
+          modeOptions: const ['Mixed', 'Indoor only', 'Outdoor only'],
+          selectedModeIndex: IndoorOutdoorMode.values.indexOf(s.mode),
+          onCommonChanged: (c) =>
+              store.patchIndoorOutdoor((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) => store.patchIndoorOutdoor(
+            (x) => x.copyWith(floatingItemCount: n),
+          ),
+          onSpeedChanged: (sp) =>
+              store.patchIndoorOutdoor((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) => store.patchIndoorOutdoor(
+            (x) => x.copyWith(floatingAnimation: v),
+          ),
+          onModeIndexChanged: (i) => store.patchIndoorOutdoor(
+            (x) => x.copyWith(mode: IndoorOutdoorMode.values[i]),
+          ),
+        );
+      case GameCatalog.colorSortId:
+        final s = store.colorSort;
+        return FloatingSortControls(
+          common: s.common,
+          floatingItemCount: s.floatingItemCount,
+          speed: s.speed,
+          floatingAnimation: s.floatingAnimation,
+          modeLabel: 'Color mode',
+          modeOptions: const ['Mixed', 'Red only', 'Blue only', 'Green only'],
+          selectedModeIndex: ColorSortMode.values.indexOf(s.mode),
+          onCommonChanged: (c) =>
+              store.patchColorSort((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) =>
+              store.patchColorSort((x) => x.copyWith(floatingItemCount: n)),
+          onSpeedChanged: (sp) =>
+              store.patchColorSort((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) =>
+              store.patchColorSort((x) => x.copyWith(floatingAnimation: v)),
+          onModeIndexChanged: (i) => store.patchColorSort(
+            (x) => x.copyWith(mode: ColorSortMode.values[i]),
+          ),
+        );
+      case GameCatalog.bigSmallId:
+        final s = store.bigSmall;
+        return FloatingSortControls(
+          common: s.common,
+          floatingItemCount: s.floatingItemCount,
+          speed: s.speed,
+          floatingAnimation: s.floatingAnimation,
+          modeLabel: 'Size mode',
+          modeOptions: const ['Mixed', 'Big only', 'Small only'],
+          selectedModeIndex: BigSmallMode.values.indexOf(s.mode),
+          onCommonChanged: (c) =>
+              store.patchBigSmall((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) =>
+              store.patchBigSmall((x) => x.copyWith(floatingItemCount: n)),
+          onSpeedChanged: (sp) =>
+              store.patchBigSmall((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) =>
+              store.patchBigSmall((x) => x.copyWith(floatingAnimation: v)),
+          onModeIndexChanged: (i) => store.patchBigSmall(
+            (x) => x.copyWith(mode: BigSmallMode.values[i]),
+          ),
+        );
+      case GameCatalog.colorSchoolBagsId:
+        final s = store.colorSchoolBags;
+        return MatchColorControls(
+          common: s.common,
+          difficultyLabels: const [
+            'Level 1 · 2 backpacks',
+            'Level 2 · 3 backpacks',
+            'Level 3 · 4 backpacks',
+            'Advanced · 5 backpacks',
+            'Advanced · 6 backpacks',
+          ],
+          selectedDifficultyIndex:
+              ColorSchoolBagsDifficulty.values.indexOf(s.difficulty),
+          colorIds: ColorSchoolBagsData.allColorIds,
+          colorLabels: ColorSchoolBagsData.allColorIds
+              .map(ColorSchoolBagsData.displayName)
+              .toList(),
+          enabledColors: s.enabledColors,
+          minColors: 2,
+          onCommonChanged: (c) =>
+              store.patchColorSchoolBags((x) => x.copyWith(common: c)),
+          onDifficultyChanged: (i) => store.patchColorSchoolBags(
+            (x) => x.copyWith(difficulty: ColorSchoolBagsDifficulty.values[i]),
+          ),
+          onColorsChanged: (colors) => store.patchColorSchoolBags(
+            (x) => x.copyWith(enabledColors: colors),
+          ),
+        );
+      case GameCatalog.sortSocksId:
+        final s = store.sortSocks;
+        return MatchColorControls(
+          common: s.common,
+          difficultyLabels: const [
+            'Level 1 · 2 laundry bags',
+            'Level 2 · 3 laundry bags',
+            'Level 3 · 4 laundry bags',
+            'Advanced · 5 laundry bags',
+            'Advanced · 6 laundry bags',
+          ],
+          selectedDifficultyIndex:
+              SortSocksDifficulty.values.indexOf(s.difficulty),
+          colorIds: SortSocksData.allColorIds,
+          colorLabels:
+              SortSocksData.allColorIds.map(SortSocksData.displayName).toList(),
+          enabledColors: s.enabledColors,
+          minColors: 2,
+          onCommonChanged: (c) =>
+              store.patchSortSocks((x) => x.copyWith(common: c)),
+          onDifficultyChanged: (i) => store.patchSortSocks(
+            (x) => x.copyWith(difficulty: SortSocksDifficulty.values[i]),
+          ),
+          onColorsChanged: (colors) =>
+              store.patchSortSocks((x) => x.copyWith(enabledColors: colors)),
+        );
+      case GameCatalog.flowerGardenId:
+        final s = store.flowerGarden;
+        return MatchColorControls(
+          common: s.common,
+          difficultyLabels: const [
+            'Level 1 · 2 colors',
+            'Level 2 · 3 colors',
+            'Level 3 · 4 colors',
+            'Level 4 · 5 colors',
+          ],
+          selectedDifficultyIndex:
+              FlowerGardenDifficulty.values.indexOf(s.difficulty),
+          colorIds: FlowerGardenData.allColorIds,
+          colorLabels: FlowerGardenData.allColorIds
+              .map(FlowerGardenData.displayName)
+              .toList(),
+          enabledColors: s.enabledColors,
+          minColors: 2,
+          onCommonChanged: (c) =>
+              store.patchFlowerGarden((x) => x.copyWith(common: c)),
+          onDifficultyChanged: (i) => store.patchFlowerGarden(
+            (x) => x.copyWith(difficulty: FlowerGardenDifficulty.values[i]),
+          ),
+          onColorsChanged: (colors) => store.patchFlowerGarden(
+            (x) => x.copyWith(enabledColors: colors),
+          ),
+        );
+      case GameCatalog.healthyFoodId:
+        return HealthyFoodControls(
+          settings: store.healthyFood,
+          onChanged: (next) => store.patchHealthyFood((_) => next),
+        );
+      case GameCatalog.cleanDirtyId:
+        final s = store.cleanDirty;
+        return FloatingSortControls(
+          common: s.common,
+          floatingItemCount: s.floatingItemCount,
+          speed: s.speed,
+          floatingAnimation: s.floatingAnimation,
+          minFloating: 3,
+          maxFloating: 8,
+          modeLabel: 'Clothes mode',
+          modeOptions: const ['Mixed', 'Clean only', 'Dirty only'],
+          selectedModeIndex: CleanDirtyMode.values.indexOf(s.mode),
+          onCommonChanged: (c) =>
+              store.patchCleanDirty((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) =>
+              store.patchCleanDirty((x) => x.copyWith(floatingItemCount: n)),
+          onSpeedChanged: (sp) =>
+              store.patchCleanDirty((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) =>
+              store.patchCleanDirty((x) => x.copyWith(floatingAnimation: v)),
+          onModeIndexChanged: (i) => store.patchCleanDirty(
+            (x) => x.copyWith(mode: CleanDirtyMode.values[i]),
+          ),
+          extraControls: SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Bubble effects'),
+            subtitle: const Text('Floating soap bubbles in the laundry room'),
+            value: s.bubbleEffects,
+            onChanged: (v) =>
+                store.patchCleanDirty((x) => x.copyWith(bubbleEffects: v)),
+          ),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 }
 
-String _formatSchoolBagsDuration(int seconds) {
-  if (seconds < 60) return '${seconds}s';
-  if (seconds % 60 == 0) return '${seconds ~/ 60} min';
-  return '${seconds}s';
+class _ChildStatsCard extends StatelessWidget {
+  const _ChildStatsCard({required this.app});
+
+  final AppState app;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = app.rewards;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Child statistics',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _StatPill(label: 'Level', value: '${app.profileLevel}', emoji: '🌱'),
+              _StatPill(label: 'Coins', value: '${r.coins}', emoji: '🪙'),
+              _StatPill(label: 'Stars', value: '${r.stars}', emoji: '⭐'),
+              _StatPill(label: 'XP', value: '${r.xp}', emoji: '✨'),
+              _StatPill(
+                label: 'Games today',
+                value: '${r.playsToday.values.fold<int>(0, (a, b) => a + b)}',
+                emoji: '🎮',
+              ),
+              _StatPill(
+                label: 'Free / game',
+                value: '${RewardsState.freePlaysPerGame}',
+                emoji: '📅',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatPill extends StatelessWidget {
+  const _StatPill({
+    required this.label,
+    required this.value,
+    required this.emoji,
+  });
+
+  final String label;
+  final String value;
+  final String emoji;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: SortJoyColors.skyBottom,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              ),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: SortJoyColors.inkSoft,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _SectionCard extends StatelessWidget {
