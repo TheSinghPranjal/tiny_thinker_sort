@@ -7,8 +7,10 @@ abstract final class GameCatalog {
   static const colorSortId = 'color_sort';
   static const bigSmallId = 'big_small_sort_tiny';
   static const colorSchoolBagsId = 'color_school_bags';
+  static const sortSocksId = 'sort_socks';
   static const flowerGardenId = 'flower_garden';
   static const healthyFoodId = 'healthy_junk_food_sort';
+  static const cleanDirtyId = 'clean_dirty_sort';
 
   static const games = <GameDefinition>[
     // Little Explorers (1–2)
@@ -48,6 +50,18 @@ abstract final class GameCatalog {
       skills: ['Colors', 'Matching', 'Fine Motor'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
+    ),
+    GameDefinition(
+      id: sortSocksId,
+      title: 'Sort Socks',
+      emoji: '🧦',
+      subtitle: 'Match colorful socks to matching laundry bags',
+      ageWorld: AgeWorld.littleExplorers,
+      skills: ['Colors', 'Matching', 'Fine Motor'],
+      interaction: InteractionStyle.drag,
+      implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: flowerGardenId,
@@ -58,6 +72,7 @@ abstract final class GameCatalog {
       skills: ['Colors', 'Nature', 'Fine Motor'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: healthyFoodId,
@@ -68,6 +83,7 @@ abstract final class GameCatalog {
       skills: ['Healthy Eating', 'Food', 'Categories', 'Fine Motor'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: 'balloon_color_match',
@@ -143,6 +159,7 @@ abstract final class GameCatalog {
       skills: ['Categories', 'Food', 'Vocabulary'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: indoorOutdoorId,
@@ -153,6 +170,7 @@ abstract final class GameCatalog {
       skills: ['Categories', 'Games', 'Vocabulary'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: colorSortId,
@@ -163,6 +181,7 @@ abstract final class GameCatalog {
       skills: ['Colors', 'Matching', 'Vocabulary'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: bigSmallId,
@@ -173,6 +192,7 @@ abstract final class GameCatalog {
       skills: ['Size', 'Compare', 'Vocabulary'],
       interaction: InteractionStyle.drag,
       implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: 'animal_sort',
@@ -265,13 +285,15 @@ abstract final class GameCatalog {
       interaction: InteractionStyle.drag,
     ),
     GameDefinition(
-      id: 'clean_dirty_sort',
-      title: 'Clean vs Dirty',
-      emoji: '🧼',
-      subtitle: 'Silly dirt bubbles — never shame',
+      id: cleanDirtyId,
+      title: 'Clean & Dirty Clothes',
+      emoji: '👕',
+      subtitle: 'Wash dirty clothes, store clean ones',
       ageWorld: AgeWorld.tinyLearners,
-      skills: ['Hygiene', 'Sorting'],
+      skills: ['Hygiene', 'Sorting', 'Everyday Life', 'Observation'],
       interaction: InteractionStyle.drag,
+      implemented: true,
+      hasParentControls: true,
     ),
     GameDefinition(
       id: 'weather_sort',
@@ -440,4 +462,8 @@ abstract final class GameCatalog {
       return null;
     }
   }
+
+  /// Games that expose Parent Zone controls.
+  static List<GameDefinition> get withParentControls =>
+      games.where((g) => g.hasParentControls && g.implemented).toList();
 }

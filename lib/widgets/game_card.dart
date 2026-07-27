@@ -29,110 +29,194 @@ class GameCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
         gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
+            Color(0xFFFFFFFF),
             Color(0xFFFFFDF8),
-            Color(0xFFFFF7EE),
+            Color(0xFFFFF3E8),
           ],
+          stops: [0.0, 0.45, 1.0],
         ),
-        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.7),
-          width: 1,
+          color: Colors.white.withValues(alpha: 0.95),
+          width: 2.5,
         ),
-        boxShadow: const [
-          // Main warm shadow
+        boxShadow: [
+          // Contact shadow — sits right under the card
           BoxShadow(
-            color: Color(0x1F8A6F4A), // #8A6F4A @ 12%
-            blurRadius: 28,
-            spreadRadius: -4,
-            offset: Offset(0, 8),
+            color: const Color(0xFF8A6F4A).withValues(alpha: 0.18),
+            blurRadius: 6,
+            spreadRadius: -1,
+            offset: const Offset(0, 3),
           ),
-          // Soft ambient
+          // Mid lift
           BoxShadow(
-            color: Color(0x14000000), // black @ 8%
-            blurRadius: 42,
-            spreadRadius: -10,
-            offset: Offset(0, 18),
+            color: const Color(0xFF8A6F4A).withValues(alpha: 0.16),
+            blurRadius: 22,
+            spreadRadius: -2,
+            offset: const Offset(0, 12),
+          ),
+          // Soft ambient float
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 40,
+            spreadRadius: -6,
+            offset: const Offset(0, 22),
+          ),
+          // Side bloom for pillowy edges
+          BoxShadow(
+            color: const Color(0xFF8A6F4A).withValues(alpha: 0.08),
+            blurRadius: 16,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // Top-edge highlight (inner shadow Y:1 white 90%)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: IgnorePointer(
-              child: Container(
-                height: 1,
-                margin: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(1),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25.5),
+        child: Stack(
+          children: [
+            // Convex bulge lighting (bright center-top)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: const Alignment(-0.35, -0.85),
+                      radius: 1.15,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.85),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 0.7],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _CardImage(
-                    image: image,
-                    placeholderEmoji: placeholderEmoji,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 32),
-                  child: Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      height: 1.25,
-                      fontWeight: FontWeight.w800,
-                      color: titleColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.only(right: 32),
-                  child: Text(
-                    subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.nunito(
-                      fontSize: 13,
-                      height: 1.3,
-                      fontWeight: FontWeight.w600,
-                      color: _subtitleColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Positioned(
-            right: 12,
-            bottom: 12,
-            child: _DecorIcon(),
-          ),
-          if (badge.isNotEmpty)
+            // Top rim highlight (inset light)
             Positioned(
-              top: 16,
-              right: 16,
-              child: _Badge(text: badge, color: badgeColor),
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 14,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.95),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-        ],
+            // Left rim highlight
+            Positioned(
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: 10,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.55),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Bottom inner shade — grounds the bulge
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 28,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        const Color(0xFF8A6F4A).withValues(alpha: 0.10),
+                        const Color(0xFF8A6F4A).withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _CardImage(
+                      image: image,
+                      placeholderEmoji: placeholderEmoji,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 32),
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.nunito(
+                        fontSize: 16,
+                        height: 1.25,
+                        fontWeight: FontWeight.w800,
+                        color: titleColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 32),
+                    child: Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.nunito(
+                        fontSize: 13,
+                        height: 1.3,
+                        fontWeight: FontWeight.w600,
+                        color: _subtitleColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Positioned(
+              right: 12,
+              bottom: 12,
+              child: _DecorIcon(),
+            ),
+            if (badge.isNotEmpty)
+              Positioned(
+                top: 16,
+                right: 16,
+                child: _Badge(text: badge, color: badgeColor),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -154,44 +238,71 @@ class _CardImage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.5),
-            width: 1,
+            color: Colors.white.withValues(alpha: 0.75),
+            width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
+              color: const Color(0xFF8A6F4A).withValues(alpha: 0.14),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(17),
-          child: Image.asset(
-            image,
-            fit: BoxFit.cover,
-            alignment: Alignment.center,
-            width: double.infinity,
-            height: double.infinity,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF9CCDF4),
-                      Color(0xFFA3CC46),
-                    ],
+          borderRadius: BorderRadius.circular(16.5),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                image,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFF9CCDF4),
+                          Color(0xFFA3CC46),
+                        ],
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      placeholderEmoji ?? '🎮',
+                      style: const TextStyle(fontSize: 48),
+                    ),
+                  );
+                },
+              ),
+              // Soft gloss on image well
+              IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.22),
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.06),
+                      ],
+                      stops: const [0.0, 0.35, 1.0],
+                    ),
                   ),
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  placeholderEmoji ?? '🎮',
-                  style: const TextStyle(fontSize: 48),
-                ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       ),
@@ -296,11 +407,20 @@ class _Badge extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.55),
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2B60D9).withValues(alpha: 0.18),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF2B60D9).withValues(alpha: 0.28),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -309,7 +429,7 @@ class _Badge extends StatelessWidget {
         style: GoogleFonts.nunito(
           color: Colors.white,
           fontWeight: FontWeight.w700,
-          fontSize: 16,
+          fontSize: 15,
           height: 1.1,
         ),
       ),
