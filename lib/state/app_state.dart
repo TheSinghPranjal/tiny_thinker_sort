@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/age_world.dart';
 import '../models/parent_settings.dart';
 import '../models/rewards.dart';
+import 'game_settings_store.dart';
 
 class AppState extends ChangeNotifier {
   AppState();
@@ -20,6 +21,7 @@ class AppState extends ChangeNotifier {
   AgeWorld? ageWorld;
   ParentSettings settings = const ParentSettings();
   RewardsState rewards = const RewardsState();
+  final GameSettingsStore gameSettings = GameSettingsStore();
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -31,12 +33,24 @@ class AppState extends ChangeNotifier {
         orElse: () => AgeWorld.tinyLearners,
       );
     }
+
+    Map<String, dynamic>? legacySettings;
     final settingsRaw = prefs.getString(_keySettings);
     if (settingsRaw != null) {
-      settings = ParentSettings.fromJson(
-        jsonDecode(settingsRaw) as Map<String, dynamic>,
-      );
+      try {
+        final map = jsonDecode(settingsRaw) as Map<String, dynamic>;
+        settings = ParentSettings.fromJson(map);
+        // Keep full map for one-time migration into per-game keys.
+        if (map.containsKey('sessionSeconds') ||
+            map.containsKey('fruitVegMode') ||
+            map.containsKey('colorSchoolBagsDifficulty')) {
+          legacySettings = map;
+        }
+      } catch (_) {
+        settings = const ParentSettings();
+      }
     }
+
     final rewardsRaw = prefs.getString(_keyRewards);
     if (rewardsRaw != null) {
       rewards = RewardsState.fromJson(
@@ -44,8 +58,26 @@ class AppState extends ChangeNotifier {
       );
     }
     rewards = _rollDailyIfNeeded(rewards);
+
+    await gameSettings.load(legacySettings: legacySettings);
+    gameSettings.addListener(_onGameSettingsChanged);
+
+    // Persist slim global settings if we still had a monolithic blob.
+    if (legacySettings != null) {
+      await prefs.setString(_keySettings, jsonEncode(settings.toJson()));
+    }
+
     ready = true;
     notifyListeners();
+  }
+
+  void _onGameSettingsChanged() => notifyListeners();
+
+  @override
+  void dispose() {
+    gameSettings.removeListener(_onGameSettingsChanged);
+    gameSettings.dispose();
+    super.dispose();
   }
 
   RewardsState _rollDailyIfNeeded(RewardsState current) {
@@ -54,7 +86,6 @@ class AppState extends ChangeNotifier {
     if (current.lastPlayDay.isEmpty) {
       return current.copyWith(playsToday: {});
     }
-    // New calendar day: reset free plays; streak handled on play.
     return current.copyWith(playsToday: {});
   }
 
@@ -62,6 +93,11 @@ class AppState extends ChangeNotifier {
     final now = DateTime.now();
     return '${now.year}-${now.month}-${now.day}';
   }
+
+  /// Profile level derived from XP (calm, parent-friendly progression).
+  int get profileLevel => (rewards.xp ~/ 50) + 1;
+
+  int playsTodayFor(String gameId) => rewards.playsFor(gameId);
 
   Future<void> completeOnboarding(AgeWorld world) async {
     ageWorld = world;
@@ -82,6 +118,10 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setPremium(bool value) async {
+    await updateSettings(settings.copyWith(isPremium: value));
+  }
+
   Future<void> resetProgress() async {
     rewards = const RewardsState();
     await _persist();
@@ -94,16 +134,27 @@ class AppState extends ChangeNotifier {
   int remainingPlays(String gameId) =>
       rewards.remainingPlays(gameId, isPremium: settings.isPremium);
 
+  /// Records a completed play toward the free-tier daily limit.
+  Future<void> recordPlay(String gameId) async {
+    final today = _todayKey();
+    final plays = Map<String, int>.from(rewards.playsToday);
+    plays[gameId] = (plays[gameId] ?? 0) + 1;
+    rewards = rewards.copyWith(playsToday: plays, lastPlayDay: today);
+    await _persist();
+    notifyListeners();
+  }
+
   Future<SessionResult> applySessionResult({
     required String gameId,
     required int correctSorts,
     required Map<String, int> categoryCounts,
     required int longestStreak,
+    double rewardMultiplier = 1.0,
+    bool coinRewardsEnabled = true,
   }) async {
     final today = _todayKey();
     var next = rewards;
 
-    // Daily streak
     var streak = next.dailyStreak;
     if (next.lastPlayDay != today) {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -111,9 +162,10 @@ class AppState extends ChangeNotifier {
       streak = next.lastPlayDay == yKey ? streak + 1 : 1;
     }
 
-    final coins = correctSorts * 3;
-    final stars = (correctSorts / 3).floor().clamp(0, 99);
-    final xp = correctSorts * 5;
+    final mult = rewardMultiplier.clamp(0.5, 2.0);
+    final rawCoins = coinRewardsEnabled ? (correctSorts * 3 * mult).round() : 0;
+    final stars = (correctSorts / 3 * mult).floor().clamp(0, 99);
+    final xp = (correctSorts * 5 * mult).round();
 
     final plays = Map<String, int>.from(next.playsToday);
     plays[gameId] = (plays[gameId] ?? 0) + 1;
@@ -128,10 +180,10 @@ class AppState extends ChangeNotifier {
     if (correctSorts >= 15) unlock('sorter_15', 'Sorting Star');
     if (longestStreak >= 5) unlock('streak_5', 'Hot Streak');
     if (streak >= 3) unlock('daily_3', '3-Day Sparkle');
-    if ((next.coins + coins) >= 100) unlock('coins_100', 'Coin Collector');
+    if ((next.coins + rawCoins) >= 100) unlock('coins_100', 'Coin Collector');
 
     next = next.copyWith(
-      coins: next.coins + coins,
+      coins: next.coins + rawCoins,
       stars: next.stars + stars,
       xp: next.xp + xp,
       dailyStreak: streak,
@@ -147,7 +199,7 @@ class AppState extends ChangeNotifier {
       gameId: gameId,
       correctSorts: correctSorts,
       categoryCounts: categoryCounts,
-      coinsEarned: coins,
+      coinsEarned: rawCoins,
       starsEarned: stars,
       xpEarned: xp,
       longestStreak: longestStreak,
