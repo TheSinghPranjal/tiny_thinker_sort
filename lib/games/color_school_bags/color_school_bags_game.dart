@@ -10,40 +10,43 @@ import '../../widgets/app_background.dart';
 
 Future<void> openColorSchoolBagsGame(BuildContext context) async {
   final app = context.read<AppState>();
-  final settings = app.settings;
+  final s = app.gameSettings.colorSchoolBags;
+  final c = s.common;
 
-  final enabledColors = settings.colorSchoolBagsEnabledColors;
   final categories = ColorSchoolBagsData.pickCategories(
-    enabledColorIds: enabledColors,
-    backpackCount: settings.colorSchoolBagsBackpackCount,
+    enabledColorIds: s.enabledColors,
+    backpackCount: s.backpackCount,
   );
   final itemPool = ColorSchoolBagsData.itemsForCategories(categories);
-
-  final sessionSeconds = settings.colorSchoolBagsUnlimitedTime
-      ? 0
-      : (settings.colorSchoolBagsSessionSeconds > 0
-          ? settings.colorSchoolBagsSessionSeconds
-          : 60);
+  final itemSize = c.largerTouchTargets ? 140.0 : 120.0;
 
   final config = SortingEngineConfig(
     gameId: GameCatalog.colorSchoolBagsId,
     categories: categories,
     itemPool: itemPool,
-    sessionSeconds: sessionSeconds,
+    sessionSeconds: c.sessionSeconds,
     maxFloating: 1,
-    speedMultiplier: settings.speedMultiplier * 0.65,
-    voiceEnabled: settings.voiceEnabled,
-    celebrationsEnabled: settings.celebrationsEnabled,
+    speedMultiplier: 0.65,
+    voiceEnabled: c.narrationEnabled,
+    celebrationsEnabled: c.celebrationsEnabled,
     celebrationSubtitle: "You're learning colors!",
     starsPerCorrectSort: 10,
     coinsPerCorrectSort: 10,
     celebrateEveryN: 5,
-    unlimitedSession: settings.colorSchoolBagsUnlimitedTime,
-    snapPadding: 48,
-    itemSize: 120,
+    unlimitedSession: c.practiceMode,
+    snapPadding: c.largerTouchTargets ? 64 : 48,
+    itemSize: itemSize,
     bookShape: true,
     categoryEmoji: '🎒',
     hideCoinHud: true,
+    soundEnabled: c.soundEnabled,
+    musicEnabled: c.musicEnabled,
+    coinRewardsEnabled: c.coinRewardsEnabled,
+    hapticsEnabled: c.hapticsEnabled,
+    leftHandedLayout: c.leftHandedLayout,
+    largerTouchTargets: c.largerTouchTargets,
+    reducedMotion: c.reducedMotion,
+    rewardMultiplier: c.rewardMultiplier,
   );
 
   await Navigator.of(context).push(
