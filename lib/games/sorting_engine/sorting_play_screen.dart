@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/game_definition.dart';
 import '../../models/rewards.dart';
+import '../../screens/parent_zone_screen.dart';
 import '../../state/app_state.dart';
 import '../../theme/sortjoy_theme.dart';
 import '../../widgets/celebration_burst.dart';
@@ -13,7 +15,11 @@ import '../../widgets/soft_toast.dart';
 import '../../widgets/app_background.dart';
 import '../healthy_food/food_bubble_chip.dart';
 import '../healthy_food/toddler_drop_zone.dart';
+import '../../data/clean_dirty_data.dart';
 import '../../data/healthy_food_data.dart';
+import '../clean_dirty/clothing_chip.dart';
+import '../clean_dirty/laundry_drop_zones.dart';
+import '../clean_dirty/laundry_room_background.dart';
 import 'sorting_engine.dart';
 
 class SortingPlayScreen extends StatefulWidget {
@@ -87,6 +93,8 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
       correctSorts: snap.correctSorts,
       categoryCounts: Map<String, int>.from(snap.categoryCounts),
       longestStreak: snap.longestStreak,
+      rewardMultiplier: widget.config.rewardMultiplier,
+      coinRewardsEnabled: widget.config.coinRewardsEnabled,
     );
     if (!mounted) return;
     setState(() => _pendingResult = result);
@@ -136,8 +144,13 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
       return;
     }
     final ok = _engine.dropOnCategory(item.instanceId, hitCategory);
-    if (ok && widget.config.celebrationsEnabled) {
-      _burstKey++;
+    if (ok) {
+      if (widget.config.hapticsEnabled) {
+        HapticFeedback.lightImpact();
+      }
+      if (widget.config.celebrationsEnabled) {
+        _burstKey++;
+      }
     }
   }
 
@@ -169,6 +182,9 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
     final snap = _engine.snapshot();
     final padding = MediaQuery.paddingOf(context);
     final itemHalf = widget.config.itemSize / 2;
+    final leftHanded = widget.config.leftHandedLayout;
+    final showCoins =
+        !widget.config.hideCoinHud && widget.config.coinRewardsEnabled;
 
     return Scaffold(
       body: LayoutBuilder(
@@ -184,48 +200,68 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
             }
           }
 
+          final hudStats = <Widget>[
+            _HudChip(
+              icon: Icons.timer_rounded,
+              label: widget.config.unlimitedSession
+                  ? '∞'
+                  : _formatTime(snap.remainingSeconds),
+              color: SortJoyColors.lavender,
+            ),
+            if (showCoins) ...[
+              const SizedBox(width: 8),
+              _HudChip(
+                icon: Icons.monetization_on_rounded,
+                label: '${snap.coins}',
+                color: SortJoyColors.coin,
+              ),
+            ],
+            const SizedBox(width: 8),
+            _HudChip(
+              icon: Icons.star_rounded,
+              label: '${snap.stars}',
+              color: SortJoyColors.star,
+            ),
+          ];
+
+          final pauseBtn = IconButton.filledTonal(
+            onPressed: _engine.togglePause,
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.9),
+            ),
+            icon: Icon(
+              snap.paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+              color: SortJoyColors.ink,
+            ),
+          );
+
           return Stack(
             children: [
-              Positioned.fill(child: widget.background),
+              Positioned.fill(
+                child: widget.config.laundryZones
+                    ? LaundryRoomBackground(
+                        bubbleEffects: widget.config.bubbleEffects,
+                        reducedMotion: widget.config.reducedMotion,
+                        cheerLevel: snap.correctSorts ~/ 3,
+                      )
+                    : widget.background,
+              ),
               // HUD
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Row(
-                    children: [
-                      _HudChip(
-                        icon: Icons.timer_rounded,
-                        label: widget.config.unlimitedSession
-                            ? '∞'
-                            : _formatTime(snap.remainingSeconds),
-                        color: SortJoyColors.lavender,
-                      ),
-                      if (!widget.config.hideCoinHud) ...[
-                        const SizedBox(width: 8),
-                        _HudChip(
-                          icon: Icons.monetization_on_rounded,
-                          label: '${snap.coins}',
-                          color: SortJoyColors.coin,
-                        ),
-                      ],
-                      const SizedBox(width: 8),
-                      _HudChip(
-                        icon: Icons.star_rounded,
-                        label: '${snap.stars}',
-                        color: SortJoyColors.star,
-                      ),
-                      const Spacer(),
-                      IconButton.filledTonal(
-                        onPressed: _engine.togglePause,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 0.9),
-                        ),
-                        icon: Icon(
-                          snap.paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                          color: SortJoyColors.ink,
-                        ),
-                      ),
-                    ],
+                    children: leftHanded
+                        ? [
+                            pauseBtn,
+                            const Spacer(),
+                            ...hudStats,
+                          ]
+                        : [
+                            ...hudStats,
+                            const Spacer(),
+                            pauseBtn,
+                          ],
                   ),
                 ),
               ),
@@ -238,8 +274,10 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                   paused: snap.paused,
                   itemSize: widget.config.itemSize,
                   bookShape: widget.config.bookShape,
+                  sockShape: widget.config.sockShape,
                   flowerShape: widget.config.flowerShape,
                   foodBubbleShape: widget.config.foodBubbleShape,
+                  clothesChipShape: widget.config.clothesChipShape,
                   onDragStart: () => _engine.beginDrag(item.instanceId),
                   onDragUpdate: (global) {
                     final box = context.findRenderObject() as RenderBox?;
@@ -273,7 +311,34 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                     for (var i = 0; i < widget.config.categories.length; i++) ...[
                       if (i > 0) const SizedBox(width: 12),
                       Expanded(
-                        child: widget.config.toddlerZones
+                        child: widget.config.laundryZones
+                            ? LaundryDropZone(
+                                key: _zoneKeys[widget.config.categories[i].id],
+                                category: widget.config.categories[i],
+                                isWashingMachine:
+                                    widget.config.categories[i].id ==
+                                        CleanDirtyData.dirtyCategoryId,
+                                glow: snap.guidanceCategoryId ==
+                                        widget.config.categories[i].id ||
+                                    snap.idleHint &&
+                                        _engine.items.isNotEmpty &&
+                                        _engine.items.first.item.categoryId ==
+                                            widget.config.categories[i].id,
+                                wiggle: snap.guidanceCategoryId != null &&
+                                    snap.guidanceCategoryId !=
+                                        widget.config.categories[i].id,
+                                count: snap.categoryCounts[
+                                        widget.config.categories[i].id] ??
+                                    0,
+                                reaction: snap.happyDropCategoryId ==
+                                        widget.config.categories[i].id
+                                    ? 'happy'
+                                    : snap.wrongDropCategoryId ==
+                                            widget.config.categories[i].id
+                                        ? 'confused'
+                                        : null,
+                              )
+                            : widget.config.toddlerZones
                             ? ToddlerDropZone(
                                 key: _zoneKeys[widget.config.categories[i].id],
                                 category: widget.config.categories[i],
@@ -346,11 +411,44 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                   ),
                 ),
 
-              if (widget.config.celebrationsEnabled)
+              if (widget.config.celebrationsEnabled &&
+                  !widget.config.reducedMotion)
                 IgnorePointer(
                   child: CelebrationBurst(
                     key: ValueKey(_burstKey),
                     seed: _random.nextInt(1 << 20),
+                  ),
+                ),
+
+              if (widget.config.unlimitedSession && !snap.paused && !snap.finished)
+                Positioned(
+                  left: 24,
+                  right: 24,
+                  // Keep clear of tall laundry / toddler drop zones.
+                  bottom: padding.bottom +
+                      (widget.config.laundryZones || widget.config.toddlerZones
+                          ? 180
+                          : 16),
+                  child: Center(
+                    child: TextButton.icon(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.white.withValues(alpha: 0.92),
+                        foregroundColor: SortJoyColors.ink,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                      onPressed: _engine.finishNow,
+                      icon: const Icon(Icons.check_circle_outline_rounded),
+                      label: const Text(
+                        'Done Playing',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
                   ),
                 ),
 
@@ -360,6 +458,7 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                     color: Colors.black45,
                     child: Center(
                       child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 28),
                         padding: const EdgeInsets.all(28),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -389,6 +488,25 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                               onPressed: _engine.togglePause,
                               child: const Text('Keep Playing'),
                             ),
+                            const SizedBox(height: 8),
+                            OutlinedButton.icon(
+                              onPressed: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => ParentZoneScreen(
+                                      expandGameId: widget.config.gameId,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.tune_rounded),
+                              label: const Text('Parent Settings'),
+                            ),
+                            if (widget.config.unlimitedSession)
+                              TextButton(
+                                onPressed: _engine.finishNow,
+                                child: const Text('Done Playing'),
+                              ),
                             TextButton(
                               onPressed: () => Navigator.pop(context),
                               child: const Text('Home'),
@@ -415,6 +533,8 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
   Color? _toastColor(String message) {
     if (message == 'HEALTHY!') return SortJoyColors.grass;
     if (message == 'JUNK FOOD') return SortJoyColors.coral;
+    if (message == 'All Clean!') return const Color(0xFF29B6F6);
+    if (message == 'Neatly Stored!') return const Color(0xFFFFB74D);
     return null;
   }
 }
@@ -598,8 +718,10 @@ class _DraggableFloatingItem extends StatelessWidget {
     required this.paused,
     required this.itemSize,
     required this.bookShape,
+    required this.sockShape,
     required this.flowerShape,
     required this.foodBubbleShape,
+    this.clothesChipShape = false,
     required this.onDragStart,
     required this.onDragUpdate,
     required this.onDragEnd,
@@ -609,8 +731,10 @@ class _DraggableFloatingItem extends StatelessWidget {
   final bool paused;
   final double itemSize;
   final bool bookShape;
+  final bool sockShape;
   final bool flowerShape;
   final bool foodBubbleShape;
+  final bool clothesChipShape;
   final VoidCallback onDragStart;
   final ValueChanged<Offset> onDragUpdate;
   final ValueChanged<Offset> onDragEnd;
@@ -645,7 +769,14 @@ class _DraggableFloatingItem extends StatelessWidget {
           duration: const Duration(milliseconds: 120),
           child: Transform.scale(
             scale: item.item.visualScale.clamp(0.7, 1.35),
-            child: flowerShape
+            child: clothesChipShape
+                ? ClothingChip(
+                    emoji: item.item.emoji,
+                    size: itemSize,
+                    isDirty: CleanDirtyData.isDirty(item.item),
+                    accentColor: item.item.accentColor,
+                  )
+                : flowerShape
                 ? _FlowerChip(size: itemSize, accent: accent)
                 : foodBubbleShape
                 ? FoodBubbleChip(
@@ -653,6 +784,8 @@ class _DraggableFloatingItem extends StatelessWidget {
                     emoji: item.item.emoji,
                     bobPhase: item.bobPhase,
                   )
+                : sockShape
+                ? _SockChip(size: itemSize, accent: accent)
                 : bookShape
                 ? _BookChip(
                     size: itemSize,
@@ -751,6 +884,110 @@ class _BookChip extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Soft sock silhouette — color varies by accent for toddler matching.
+class _SockChip extends StatelessWidget {
+  const _SockChip({required this.size, required this.accent});
+
+  final double size;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: accent.withValues(alpha: 0.35),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: CustomPaint(
+          painter: _SockPainter(accent: accent),
+        ),
+      ),
+    );
+  }
+}
+
+class _SockPainter extends CustomPainter {
+  const _SockPainter({required this.accent});
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color.lerp(accent, Colors.white, 0.12)!,
+          accent.withValues(alpha: 0.92),
+        ],
+      ).createShader(Offset.zero & size);
+    final stroke = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.2
+      ..strokeJoin = StrokeJoin.round;
+    final cuff = Paint()
+      ..color = Color.lerp(accent, Colors.white, 0.28)!;
+
+    final path = Path()
+      ..moveTo(w * 0.34, h * 0.12)
+      ..lineTo(w * 0.62, h * 0.12)
+      ..cubicTo(w * 0.70, h * 0.12, w * 0.74, h * 0.20, w * 0.74, h * 0.30)
+      ..lineTo(w * 0.74, h * 0.52)
+      ..cubicTo(w * 0.74, h * 0.62, w * 0.86, h * 0.66, w * 0.90, h * 0.74)
+      ..cubicTo(w * 0.95, h * 0.84, w * 0.88, h * 0.92, w * 0.74, h * 0.92)
+      ..lineTo(w * 0.30, h * 0.92)
+      ..cubicTo(w * 0.18, h * 0.92, w * 0.14, h * 0.82, w * 0.18, h * 0.72)
+      ..lineTo(w * 0.30, h * 0.48)
+      ..lineTo(w * 0.30, h * 0.30)
+      ..cubicTo(w * 0.30, h * 0.20, w * 0.26, h * 0.12, w * 0.34, h * 0.12)
+      ..close();
+
+    canvas.drawPath(path, fill);
+    canvas.drawPath(path, stroke);
+
+    final cuffRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(w * 0.30, h * 0.10, w * 0.36, h * 0.14),
+      const Radius.circular(8),
+    );
+    canvas.drawRRect(cuffRect, cuff);
+    canvas.drawRRect(
+      cuffRect,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.85)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // Soft heel highlight
+    canvas.drawCircle(
+      Offset(w * 0.38, h * 0.78),
+      w * 0.06,
+      Paint()..color = Colors.white.withValues(alpha: 0.28),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _SockPainter oldDelegate) =>
+      oldDelegate.accent != accent;
 }
 
 /// Consistent flower shape — only petal color changes for toddler color learning.

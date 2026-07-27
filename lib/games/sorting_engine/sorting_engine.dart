@@ -39,15 +39,30 @@ class SortingEngineConfig {
     this.snapPadding = 0,
     this.itemSize = 72,
     this.bookShape = false,
+    this.sockShape = false,
     this.flowerShape = false,
     this.flowerPotShape = false,
     this.categoryEmoji,
     this.hideCoinHud = false,
     this.foodBubbleShape = false,
     this.toddlerZones = false,
+    this.laundryZones = false,
+    this.clothesChipShape = false,
+    this.bubbleEffects = true,
     this.wrongDropMessage,
     this.correctCategoryLabels,
     this.categoryVoiceLabels,
+    this.soundEnabled = true,
+    this.musicEnabled = true,
+    this.coinRewardsEnabled = true,
+    this.hapticsEnabled = true,
+    this.leftHandedLayout = false,
+    this.largerTouchTargets = false,
+    this.reducedMotion = false,
+    this.floatingAnimation = true,
+    this.rewardMultiplier = 1.0,
+    this.respawnDelayMs = 0,
+    this.encouragements,
   });
 
   final String gameId;
@@ -78,8 +93,21 @@ class SortingEngineConfig {
   /// Touch target size for floating items (default 72).
   final double itemSize;
 
+  final bool soundEnabled;
+  final bool musicEnabled;
+  final bool coinRewardsEnabled;
+  final bool hapticsEnabled;
+  final bool leftHandedLayout;
+  final bool largerTouchTargets;
+  final bool reducedMotion;
+  final bool floatingAnimation;
+  final double rewardMultiplier;
+
   /// Renders items as rounded books instead of circles.
   final bool bookShape;
+
+  /// Renders items as colored socks instead of circles.
+  final bool sockShape;
 
   /// Renders items as a consistent flower shape (color varies by accent).
   final bool flowerShape;
@@ -98,6 +126,21 @@ class SortingEngineConfig {
 
   /// Toddler character drop zones instead of baskets.
   final bool toddlerZones;
+
+  /// Washing machine + cupboard drop zones (Clean & Dirty Clothes).
+  final bool laundryZones;
+
+  /// Clothing chips with clean sparkle / dirty stain overlays.
+  final bool clothesChipShape;
+
+  /// Ambient soap bubbles in laundry room background.
+  final bool bubbleEffects;
+
+  /// Delay before a sorted item is replaced (0 = immediate).
+  final int respawnDelayMs;
+
+  /// Optional override for celebration phrases.
+  final List<String>? encouragements;
 
   /// Gentle wrong-match message (e.g. "Not this one!").
   final String? wrongDropMessage;
@@ -183,9 +226,10 @@ class SortingEngine {
   DateTime? _voiceUntil;
   DateTime? _guidanceUntil;
   DateTime? _reactionUntil;
+  DateTime? _nextRespawnAt;
   Size playSize = Size.zero;
 
-  static const encouragements = [
+  static const defaultEncouragements = [
     'Fantastic!',
     'Excellent!',
     'Amazing!',
@@ -196,6 +240,9 @@ class SortingEngine {
     'Perfect Match!',
     'Awesome!',
   ];
+
+  List<String> get encouragements =>
+      config.encouragements ?? defaultEncouragements;
 
   void start(Size size) {
     playSize = size;
@@ -215,6 +262,7 @@ class SortingEngine {
     wrongDropCategoryId = null;
     happyDropCategoryId = null;
     _reactionUntil = null;
+    _nextRespawnAt = null;
     _lastTick = DateTime.now();
     _lastInteraction = DateTime.now();
     categoryCounts.clear();
@@ -242,6 +290,14 @@ class SortingEngine {
     onChanged();
   }
 
+  /// Ends practice / early-exit sessions so rewards can be saved.
+  void finishNow() {
+    if (finished) return;
+    finished = true;
+    paused = false;
+    onChanged();
+  }
+
   void tick() {
     if (finished || paused || playSize == Size.zero) return;
     final now = DateTime.now();
@@ -264,11 +320,14 @@ class SortingEngine {
     }
 
     // Float undragged items
+    final motionScale = config.reducedMotion ? 0.25 : 1.0;
+    final bobEnabled = config.floatingAnimation && !config.reducedMotion;
     for (final item in items) {
       if (item.dragging) continue;
-      item.bobPhase += dt * 2.2;
-      final bob = sin(item.bobPhase) * 10;
-      var next = item.position + item.velocity * dt * config.speedMultiplier;
+      item.bobPhase += dt * 2.2 * (bobEnabled ? 1.0 : 0.0);
+      final bob = bobEnabled ? sin(item.bobPhase) * 10 : 0.0;
+      var next = item.position +
+          item.velocity * dt * config.speedMultiplier * motionScale;
       next = Offset(next.dx, next.dy + bob * dt * 8);
 
       // Soft wrap / bounce inside play area (above baskets)
@@ -284,9 +343,19 @@ class SortingEngine {
       item.position = next;
     }
 
-    // Keep field full
-    while (items.length < config.maxFloating) {
-      _spawnItem();
+    // Keep field full (optional delayed respawn after a successful sort)
+    if (items.length < config.maxFloating) {
+      final delay = config.respawnDelayMs;
+      if (delay <= 0 ||
+          _nextRespawnAt == null ||
+          !now.isBefore(_nextRespawnAt!)) {
+        _spawnItem();
+        if (items.length < config.maxFloating && delay > 0) {
+          _nextRespawnAt = now.add(Duration(milliseconds: delay));
+        } else {
+          _nextRespawnAt = null;
+        }
+      }
     }
 
     // Clear transient UI
@@ -353,7 +422,12 @@ class SortingEngine {
     if (correct) {
       _accept(floating, categoryId);
       items.removeAt(idx);
-      _spawnItem();
+      if (config.respawnDelayMs > 0) {
+        _nextRespawnAt =
+            DateTime.now().add(Duration(milliseconds: config.respawnDelayMs));
+      } else {
+        _spawnItem();
+      }
       onChanged();
       return true;
     }
@@ -395,9 +469,13 @@ class SortingEngine {
     correctSorts += 1;
     currentStreak += 1;
     if (currentStreak > longestStreak) longestStreak = currentStreak;
-    coins += config.coinsPerCorrectSort > 0 ? config.coinsPerCorrectSort : 3;
+    if (config.coinRewardsEnabled) {
+      final base =
+          config.coinsPerCorrectSort > 0 ? config.coinsPerCorrectSort : 3;
+      coins += (base * config.rewardMultiplier).round();
+    }
     if (config.starsPerCorrectSort > 0) {
-      stars += config.starsPerCorrectSort;
+      stars += (config.starsPerCorrectSort * config.rewardMultiplier).round();
     } else if (correctSorts % 3 == 0) {
       stars += 1;
     }
