@@ -143,7 +143,7 @@ class HomeScreen extends StatelessWidget {
                   return SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      mainAxisSpacing: 18,
+                      mainAxisSpacing: 22,
                       crossAxisSpacing: spacing,
                       // Taller cells so image + 2-line title/subtitle fit.
                       childAspectRatio: isTablet ? 0.72 : 0.68,
@@ -163,15 +163,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> _openParentGate(BuildContext context) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => const _ParentGateDialog(),
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ParentZoneScreen()),
     );
-    if (ok == true && context.mounted) {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ParentZoneScreen()),
-      );
-    }
   }
 }
 
@@ -298,77 +292,3 @@ class _RewardPill extends StatelessWidget {
   }
 }
 
-class _ParentGateDialog extends StatefulWidget {
-  const _ParentGateDialog();
-
-  @override
-  State<_ParentGateDialog> createState() => _ParentGateDialogState();
-}
-
-class _ParentGateDialogState extends State<_ParentGateDialog> {
-  late final int _a;
-  late final int _b;
-  final _controller = TextEditingController();
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now().millisecond;
-    _a = 3 + (now % 6);
-    _b = 2 + ((now ~/ 7) % 5);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: const Text('Parent Zone'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('What is $_a + $_b?'),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: 'Answer',
-              errorText: _error,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            onSubmitted: (_) => _submit(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Enter'),
-        ),
-      ],
-    );
-  }
-
-  void _submit() {
-    final value = int.tryParse(_controller.text.trim());
-    if (value == _a + _b) {
-      Navigator.pop(context, true);
-    } else {
-      setState(() => _error = 'Try again');
-    }
-  }
-}

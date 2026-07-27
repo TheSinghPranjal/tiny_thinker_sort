@@ -12,6 +12,7 @@ class GameDefinition {
     required this.skills,
     required this.interaction,
     this.implemented = false,
+    this.hasParentControls = false,
   });
 
   final String id;
@@ -22,6 +23,9 @@ class GameDefinition {
   final List<String> skills;
   final InteractionStyle interaction;
   final bool implemented;
+
+  /// When true, the game appears in Parent Zone with its own settings card.
+  final bool hasParentControls;
 }
 
 class SortCategory {

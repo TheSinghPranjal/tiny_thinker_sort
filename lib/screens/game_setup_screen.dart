@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 
 import '../data/game_catalog.dart';
 import '../games/big_small/big_small_game.dart';
+import '../games/clean_dirty/clean_dirty_game.dart';
 import '../games/color_school_bags/color_school_bags_game.dart';
 import '../games/flower_garden/flower_garden_game.dart';
 import '../games/healthy_food/healthy_food_game.dart';
 import '../games/color_sort/color_sort_game.dart';
 import '../games/fruit_veg/fruit_veg_game.dart';
 import '../games/indoor_outdoor/indoor_outdoor_game.dart';
+import '../games/sort_socks/sort_socks_game.dart';
 import '../models/game_definition.dart';
 import '../models/rewards.dart';
 import '../state/app_state.dart';
@@ -77,17 +79,29 @@ class GameSetupScreen extends StatelessWidget {
                     .toList(),
               ),
               const SizedBox(height: 16),
-              Text(
-                game.implemented
-                    ? (app.settings.isPremium
-                        ? 'Unlimited play · ${app.settings.sessionSeconds}s sessions'
-                        : '$remaining of ${RewardsState.freePlaysPerGame} free plays left today')
-                    : 'This sorting adventure is almost ready!',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: SortJoyColors.inkSoft,
-                ),
+              Builder(
+                builder: (context) {
+                  late final String message;
+                  if (!game.implemented) {
+                    message = 'This sorting adventure is almost ready!';
+                  } else if (!app.settings.isPremium) {
+                    message =
+                        '$remaining of ${RewardsState.freePlaysPerGame} free plays left today';
+                  } else {
+                    final common = app.gameSettings.commonFor(game.id);
+                    message = common.practiceMode
+                        ? 'Unlimited practice · no timer'
+                        : 'Unlimited play · ${common.sessionSeconds}s sessions';
+                  }
+                  return Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: SortJoyColors.inkSoft,
+                    ),
+                  );
+                },
               ),
               const Spacer(),
               ElevatedButton(
@@ -104,10 +118,14 @@ class GameSetupScreen extends StatelessWidget {
                           await openBigSmallGame(context);
                         } else if (game.id == GameCatalog.colorSchoolBagsId) {
                           await openColorSchoolBagsGame(context);
+                        } else if (game.id == GameCatalog.sortSocksId) {
+                          await openSortSocksGame(context);
                         } else if (game.id == GameCatalog.flowerGardenId) {
                           await openFlowerGardenGame(context);
                         } else if (game.id == GameCatalog.healthyFoodId) {
                           await openHealthyFoodGame(context);
+                        } else if (game.id == GameCatalog.cleanDirtyId) {
+                          await openCleanDirtyGame(context);
                         }
                       },
                 child: Text(game.implemented ? 'Play' : 'Coming Soon'),

@@ -12,18 +12,22 @@ abstract final class GameCardAssets {
   static Color titleColorFor(String gameId) => switch (gameId) {
         'fruit_veg_sort' || 'healthy_junk_food_sort' => const Color(0xFF2F8C2F),
         'indoor_outdoor_sort' => const Color(0xFF254A9A),
-        'color_sort' || 'color_school_bags' => const Color(0xFF6A4CFF),
+        'color_sort' || 'color_school_bags' || 'sort_socks' =>
+          const Color(0xFF6A4CFF),
         'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF0288D1),
         'flower_garden' => const Color(0xFFD81B60),
+        'clean_dirty_sort' => const Color(0xFF0277BD),
         _ => const Color(0xFF254A9A),
       };
 
   static Color badgeColorFor(String gameId) => switch (gameId) {
         'fruit_veg_sort' || 'healthy_junk_food_sort' => SortJoyColors.grassDark,
         'indoor_outdoor_sort' => const Color(0xFF4F9EFF),
-        'color_sort' || 'color_school_bags' => SortJoyColors.lavender,
+        'color_sort' || 'color_school_bags' || 'sort_socks' =>
+          SortJoyColors.lavender,
         'big_small_sort_tiny' || 'big_small_sort' => SortJoyColors.mint,
         'flower_garden' => SortJoyColors.berry,
+        'clean_dirty_sort' => const Color(0xFF4FC3F7),
         _ => const Color(0xFF4F9EFF),
       };
 }
