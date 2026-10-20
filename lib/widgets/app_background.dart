@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppBackground extends StatelessWidget {
   const AppBackground({super.key});
 
-  static const assetPath = 'assets/images/app_background.png';
+  static const assetPath = 'assets/images/meadow_background.jpg';
 
   @override
   Widget build(BuildContext context) {

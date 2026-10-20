@@ -97,7 +97,23 @@ class AppState extends ChangeNotifier {
   /// Profile level derived from XP (calm, parent-friendly progression).
   int get profileLevel => (rewards.xp ~/ 50) + 1;
 
-  int playsTodayFor(String gameId) => rewards.playsFor(gameId);
+  /// Plays counted against today's free limit. Counts from an earlier day
+  /// don't apply, even if the app stayed open past midnight.
+  int playsTodayFor(String gameId) =>
+      rewards.lastPlayDay == _todayKey() ? rewards.playsFor(gameId) : 0;
+
+  /// Total plays across all games today.
+  int get totalPlaysToday => rewards.lastPlayDay == _todayKey()
+      ? rewards.playsToday.values.fold<int>(0, (a, b) => a + b)
+      : 0;
+
+  /// Daily streak as it stands today — 0 once a day has been missed.
+  int get currentStreak {
+    final last = rewards.lastPlayDay;
+    if (last == _todayKey()) return rewards.dailyStreak;
+    final y = DateTime.now().subtract(const Duration(days: 1));
+    return last == '${y.year}-${y.month}-${y.day}' ? rewards.dailyStreak : 0;
+  }
 
   Future<void> completeOnboarding(AgeWorld world) async {
     ageWorld = world;
@@ -129,10 +145,15 @@ class AppState extends ChangeNotifier {
   }
 
   bool canPlayGame(String gameId) =>
-      rewards.canPlay(gameId, isPremium: settings.isPremium);
+      settings.isPremium ||
+      playsTodayFor(gameId) < RewardsState.freePlaysPerGame;
 
-  int remainingPlays(String gameId) =>
-      rewards.remainingPlays(gameId, isPremium: settings.isPremium);
+  int remainingPlays(String gameId) => settings.isPremium
+      ? 999
+      : (RewardsState.freePlaysPerGame - playsTodayFor(gameId)).clamp(
+          0,
+          RewardsState.freePlaysPerGame,
+        );
 
   /// Records a completed play toward the free-tier daily limit.
   Future<void> recordPlay(String gameId) async {
@@ -149,8 +170,9 @@ class AppState extends ChangeNotifier {
     required int correctSorts,
     required Map<String, int> categoryCounts,
     required int longestStreak,
+    required int coinsEarned,
+    required int starsEarned,
     double rewardMultiplier = 1.0,
-    bool coinRewardsEnabled = true,
   }) async {
     final today = _todayKey();
     var next = rewards;
@@ -163,11 +185,14 @@ class AppState extends ChangeNotifier {
     }
 
     final mult = rewardMultiplier.clamp(0.5, 2.0);
-    final rawCoins = coinRewardsEnabled ? (correctSorts * 3 * mult).round() : 0;
-    final stars = (correctSorts / 3 * mult).floor().clamp(0, 99);
+    final rawCoins = coinsEarned;
+    final stars = starsEarned;
     final xp = (correctSorts * 5 * mult).round();
 
-    final plays = Map<String, int>.from(next.playsToday);
+    // Start a fresh daily count if the last play was on an earlier day.
+    final plays = next.lastPlayDay == today
+        ? Map<String, int>.from(next.playsToday)
+        : <String, int>{};
     plays[gameId] = (plays[gameId] ?? 0) + 1;
 
     final badges = Set<String>.from(next.badges);

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Soft premium kids-app game card (Figma: warm fill, triple shadow, inset art).
+import 'clay_surface.dart';
+
+/// Claymorphism game card — pastel clay body tinted per game, recessed art
+/// well, clay badge and a puffy play button.
 class GameCard extends StatelessWidget {
   const GameCard({
     super.key,
@@ -12,6 +15,8 @@ class GameCard extends StatelessWidget {
     required this.badgeColor,
     required this.titleColor,
     this.placeholderEmoji,
+    this.playable = true,
+    this.pressed = false,
   });
 
   final String image;
@@ -22,201 +27,93 @@ class GameCard extends StatelessWidget {
   final Color titleColor;
   final String? placeholderEmoji;
 
-  static const _subtitleColor = Color(0xFF5C5145);
+  /// Implemented games show a play button; others a sleepy flower sticker.
+  final bool playable;
+  final bool pressed;
+
+  static const _subtitleColor = Color(0xFF4A5560);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFFFFFDF8),
-            Color(0xFFFFF3E8),
-          ],
-          stops: [0.0, 0.45, 1.0],
-        ),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.95),
-          width: 2.5,
-        ),
-        boxShadow: [
-          // Contact shadow — sits right under the card
-          BoxShadow(
-            color: const Color(0xFF8A6F4A).withValues(alpha: 0.18),
-            blurRadius: 6,
-            spreadRadius: -1,
-            offset: const Offset(0, 3),
-          ),
-          // Mid lift
-          BoxShadow(
-            color: const Color(0xFF8A6F4A).withValues(alpha: 0.16),
-            blurRadius: 22,
-            spreadRadius: -2,
-            offset: const Offset(0, 12),
-          ),
-          // Soft ambient float
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 40,
-            spreadRadius: -6,
-            offset: const Offset(0, 22),
-          ),
-          // Side bloom for pillowy edges
-          BoxShadow(
-            color: const Color(0xFF8A6F4A).withValues(alpha: 0.08),
-            blurRadius: 16,
-            spreadRadius: 0,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(25.5),
-        child: Stack(
-          children: [
-            // Convex bulge lighting (bright center-top)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: const Alignment(-0.35, -0.85),
-                      radius: 1.15,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.85),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 0.7],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Top rim highlight (inset light)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 14,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.95),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Left rim highlight
-            Positioned(
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: 10,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.55),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Bottom inner shade — grounds the bulge
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 28,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        const Color(0xFF8A6F4A).withValues(alpha: 0.10),
-                        const Color(0xFF8A6F4A).withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
+    final clay = Color.lerp(badgeColor, Colors.white, 0.8)!;
+
+    return ClaySurface(
+      color: clay,
+      radius: 30,
+      pressed: pressed,
+      padding: const EdgeInsets.fromLTRB(9, 9, 9, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: ClayWell(
+                    radius: 22,
+                    color: Color.lerp(badgeColor, Colors.white, 0.85)!,
                     child: _CardImage(
                       image: image,
+                      tint: badgeColor,
                       placeholderEmoji: placeholderEmoji,
+                      dimmed: !playable,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 32),
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.nunito(
-                        fontSize: 16,
-                        height: 1.25,
-                        fontWeight: FontWeight.w800,
-                        color: titleColor,
-                      ),
-                    ),
+                ),
+                if (badge.isNotEmpty)
+                  Positioned(
+                    top: 9,
+                    right: 9,
+                    child: _Badge(text: badge, color: badgeColor),
                   ),
-                  const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 32),
-                    child: Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.nunito(
-                        fontSize: 13,
-                        height: 1.3,
-                        fontWeight: FontWeight.w600,
-                        color: _subtitleColor,
-                      ),
-                    ),
-                  ),
-                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 7),
+          // Title gets the full width so two-word names never truncate;
+          // the play button sits beside the subtitle.
+          Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.baloo2(
+                fontSize: 16.5,
+                height: 1.05,
+                fontWeight: FontWeight.w800,
+                color: titleColor,
               ),
             ),
-            const Positioned(
-              right: 12,
-              bottom: 12,
-              child: _DecorIcon(),
-            ),
-            if (badge.isNotEmpty)
-              Positioned(
-                top: 16,
-                right: 16,
-                child: _Badge(text: badge, color: badgeColor),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.baloo2(
+                      fontSize: 12.5,
+                      height: 1.15,
+                      fontWeight: FontWeight.w600,
+                      color: _subtitleColor,
+                    ),
+                  ),
+                ),
               ),
-          ],
-        ),
+              const SizedBox(width: 4),
+              playable
+                  ? _PlayButton(color: badgeColor, pressed: pressed)
+                  : const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: _DecorIcon(),
+                    ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -225,112 +122,121 @@ class GameCard extends StatelessWidget {
 class _CardImage extends StatelessWidget {
   const _CardImage({
     required this.image,
+    required this.tint,
     this.placeholderEmoji,
+    this.dimmed = false,
   });
 
   final String image;
+  final Color tint;
   final String? placeholderEmoji;
+  final bool dimmed;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.75),
-            width: 1.5,
+    final art = Image.asset(
+      image,
+      fit: BoxFit.cover,
+      alignment: Alignment.center,
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (context, error, stackTrace) {
+        // Until per-game art lands in assets/games/: a tinted mini scene —
+        // soft sky, rolling grass and the game's emoji as the hero.
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.lerp(tint, Colors.white, 0.55)!,
+                Color.lerp(tint, Colors.white, 0.8)!,
+              ],
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF8A6F4A).withValues(alpha: 0.14),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.5),
           child: Stack(
-            fit: StackFit.expand,
             children: [
-              Image.asset(
-                image,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: double.infinity,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFF9CCDF4),
-                          Color(0xFFA3CC46),
-                        ],
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      placeholderEmoji ?? '🎮',
-                      style: const TextStyle(fontSize: 48),
-                    ),
-                  );
-                },
-              ),
-              // Soft gloss on image well
-              IgnorePointer(
+              Positioned(
+                left: -30,
+                right: -30,
+                bottom: -40,
+                height: 80,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.22),
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.06),
+                    color: const Color(0xFF9CD65A).withValues(alpha: 0.9),
+                    borderRadius: const BorderRadius.all(
+                      Radius.elliptical(200, 80),
+                    ),
+                  ),
+                ),
+              ),
+              const Positioned(
+                left: 12,
+                top: 14,
+                child: Text('✨', style: TextStyle(fontSize: 14)),
+              ),
+              Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    placeholderEmoji ?? '🎮',
+                    style: TextStyle(
+                      fontSize: 64,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          blurRadius: 10,
+                          offset: const Offset(0, 6),
+                        ),
                       ],
-                      stops: const [0.0, 0.35, 1.0],
                     ),
                   ),
                 ),
               ),
             ],
           ),
+        );
+      },
+    );
+    return dimmed ? Opacity(opacity: 0.6, child: art) : art;
+  }
+}
+
+/// Puffy clay play button — bottom-right of the text block.
+class _PlayButton extends StatelessWidget {
+  const _PlayButton({required this.color, required this.pressed});
+
+  final Color color;
+  final bool pressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 42,
+      height: 42,
+      child: ClaySurface(
+        color: color,
+        radius: 21,
+        depth: 0.5,
+        pressed: pressed,
+        child: const Center(
+          child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 30),
         ),
       ),
     );
   }
 }
 
-/// Decorative flower sticker — bottom-right of the text block.
+/// Decorative flower sticker — shown on games that are coming soon.
 class _DecorIcon extends StatelessWidget {
   const _DecorIcon();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       width: 28,
       height: 28,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.16),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: const CustomPaint(painter: _FlowerPainter()),
-      ),
+      child: CustomPaint(painter: _FlowerPainter()),
     );
   }
 }
@@ -375,6 +281,7 @@ class _FlowerPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+/// Clay pill badge ("3 left", "Soon").
 class _Badge extends StatelessWidget {
   const _Badge({required this.text, required this.color});
 
@@ -383,61 +290,32 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Prefer Figma blue gradient; fall back to tinted gradient from [color].
-    final isDefaultBlue =
-        color == const Color(0xFF4D82C4) || color == const Color(0xFF4F9EFF);
-
-    final gradient = isDefaultBlue
-        ? const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF4F9EFF), Color(0xFF2F6FEA)],
-          )
-        : LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.lerp(color, Colors.white, 0.25)!,
-              color,
-            ],
-          );
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.55),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF2B60D9).withValues(alpha: 0.28),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return ClaySurface(
+      color: color,
+      radius: 999,
+      depth: 0.35,
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
       child: Text(
         text,
-        style: GoogleFonts.nunito(
+        style: GoogleFonts.baloo2(
           color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 15,
-          height: 1.1,
+          fontWeight: FontWeight.w800,
+          fontSize: 13.5,
+          height: 1.2,
+          shadows: [
+            Shadow(
+              color: Colors.black.withValues(alpha: 0.18),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Toy press feedback + navigation wrapper for [GameCard].
+/// Clay squish press feedback + navigation wrapper for [GameCard].
 class PressableGameCard extends StatefulWidget {
   const PressableGameCard({
     super.key,
@@ -448,6 +326,7 @@ class PressableGameCard extends StatefulWidget {
     required this.badgeColor,
     required this.titleColor,
     this.placeholderEmoji,
+    this.playable = true,
     required this.onTap,
   });
 
@@ -458,6 +337,7 @@ class PressableGameCard extends StatefulWidget {
   final Color badgeColor;
   final Color titleColor;
   final String? placeholderEmoji;
+  final bool playable;
   final VoidCallback onTap;
 
   @override
@@ -469,25 +349,31 @@ class _PressableGameCardState extends State<PressableGameCard> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onTap();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        scale: _pressed ? 0.97 : 1,
-        child: GameCard(
-          image: widget.image,
-          title: widget.title,
-          subtitle: widget.subtitle,
-          badge: widget.badge,
-          badgeColor: widget.badgeColor,
-          titleColor: widget.titleColor,
-          placeholderEmoji: widget.placeholderEmoji,
+    return Semantics(
+      button: true,
+      label: '${widget.title}. ${widget.subtitle}',
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) {
+          setState(() => _pressed = false);
+          widget.onTap();
+        },
+        onTapCancel: () => setState(() => _pressed = false),
+        child: AnimatedScale(
+          duration: Duration(milliseconds: _pressed ? 120 : 420),
+          curve: _pressed ? Curves.easeOut : Curves.elasticOut,
+          scale: _pressed ? 0.95 : 1,
+          child: GameCard(
+            image: widget.image,
+            title: widget.title,
+            subtitle: widget.subtitle,
+            badge: widget.badge,
+            badgeColor: widget.badgeColor,
+            titleColor: widget.titleColor,
+            placeholderEmoji: widget.placeholderEmoji,
+            playable: widget.playable,
+            pressed: _pressed,
+          ),
         ),
       ),
     );
