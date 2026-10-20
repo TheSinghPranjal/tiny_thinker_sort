@@ -12,6 +12,7 @@ abstract final class GameIds {
   static const sortSocks = 'sort_socks';
   static const flowerGarden = 'flower_garden';
   static const healthyFood = 'healthy_junk_food_sort';
+  static const healthyTreats = 'healthy_treats_sort';
   static const cleanDirty = 'clean_dirty_sort';
   static const animalSort = 'animal_sort';
 }

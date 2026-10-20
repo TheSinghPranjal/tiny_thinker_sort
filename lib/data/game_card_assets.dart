@@ -10,7 +10,9 @@ abstract final class GameCardAssets {
   static String imageFor(String gameId) => 'assets/games/$gameId.png';
 
   static Color titleColorFor(String gameId) => switch (gameId) {
-        'fruit_veg_sort' || 'healthy_junk_food_sort' => const Color(0xFF1E6B1E),
+        'fruit_veg_sort' ||
+        'healthy_junk_food_sort' ||
+        'healthy_treats_sort' => const Color(0xFF1E6B1E),
         'indoor_outdoor_sort' => const Color(0xFF1B3A7A),
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
           const Color(0xFF2E2160),
@@ -22,7 +24,9 @@ abstract final class GameCardAssets {
       };
 
   static Color badgeColorFor(String gameId) => switch (gameId) {
-        'fruit_veg_sort' || 'healthy_junk_food_sort' => SortJoyColors.grassDark,
+        'fruit_veg_sort' ||
+        'healthy_junk_food_sort' ||
+        'healthy_treats_sort' => SortJoyColors.grassDark,
         'indoor_outdoor_sort' => const Color(0xFF3B8BF5),
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
           const Color(0xFF9B6BFA),

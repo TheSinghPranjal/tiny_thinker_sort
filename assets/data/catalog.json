@@ -92,9 +92,9 @@
     },
     {
       "id": "healthy_junk_food_sort",
-      "title": "Learn to Sort",
+      "title": "Healthy Food vs Treats",
       "emoji": "🍎",
-      "subtitle": "Healthy food vs junk food with friendly toddlers",
+      "subtitle": "Healthy food vs treats with friendly toddlers",
       "ageWorld": "littleExplorers",
       "skills": [
         "Healthy Eating",
@@ -453,8 +453,9 @@
         "Health"
       ],
       "interaction": "drag",
-      "implemented": false,
-      "hasParentControls": false
+      "implemented": true,
+      "hasParentControls": true,
+      "contentAsset": "assets/data/healthy_food.json"
     },
     {
       "id": "beach_snow_sort",

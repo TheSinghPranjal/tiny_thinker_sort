@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../models/game_definition.dart';
 import '../../theme/sortjoy_theme.dart';
 
-/// Adorable toddler drop target for Healthy Hero / Junk Food Kid.
+/// Adorable toddler drop target for Healthy Hero / Treats Kid.
 class ToddlerDropZone extends StatefulWidget {
   const ToddlerDropZone({
     super.key,

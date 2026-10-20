@@ -11,6 +11,7 @@ abstract final class GameCatalog {
   static const sortSocksId = GameIds.sortSocks;
   static const flowerGardenId = GameIds.flowerGarden;
   static const healthyFoodId = GameIds.healthyFood;
+  static const healthyTreatsId = GameIds.healthyTreats;
   static const cleanDirtyId = GameIds.cleanDirty;
   static const animalSortId = GameIds.animalSort;
 }

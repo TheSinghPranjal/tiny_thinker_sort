@@ -638,6 +638,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           ),
         );
       case GameCatalog.healthyFoodId:
+      case GameCatalog.healthyTreatsId:
         return HealthyFoodControls(
           settings: store.healthyFood,
           onChanged: (next) => store.patchHealthyFood((_) => next),

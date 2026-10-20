@@ -15,7 +15,9 @@ class ItemGlyph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fallback = Text(emoji, style: TextStyle(fontSize: fontSize));
+    final fallback = Center(
+      child: Text(emoji, style: TextStyle(fontSize: fontSize)),
+    );
     final path = imageAsset;
     if (path == null || path.isEmpty) return fallback;
     return Image.asset(

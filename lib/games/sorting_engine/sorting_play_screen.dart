@@ -300,6 +300,7 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
             );
 
             return Stack(
+              fit: StackFit.expand,
               children: [
                 Positioned.fill(
                   child: widget.config.laundryZones
@@ -894,6 +895,7 @@ class _DraggableFloatingItem extends StatelessWidget {
                 ? FoodBubbleChip(
                     size: itemSize,
                     emoji: item.item.emoji,
+                    imageAsset: item.item.imageAsset,
                     bobPhase: item.bobPhase,
                   )
                 : sockShape

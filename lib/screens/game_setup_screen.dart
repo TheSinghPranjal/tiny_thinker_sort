@@ -126,8 +126,9 @@ class GameSetupScreen extends StatelessWidget {
       await openSortSocksGame(context);
     } else if (game.id == GameCatalog.flowerGardenId) {
       await openFlowerGardenGame(context);
-    } else if (game.id == GameCatalog.healthyFoodId) {
-      await openHealthyFoodGame(context);
+    } else if (game.id == GameCatalog.healthyFoodId ||
+        game.id == GameCatalog.healthyTreatsId) {
+      await openHealthyFoodGame(context, gameId: game.id);
     } else if (game.id == GameCatalog.cleanDirtyId) {
       await openCleanDirtyGame(context);
     } else if (game.id == GameCatalog.animalSortId) {
