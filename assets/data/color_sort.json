@@ -1,0 +1,230 @@
+{
+  "gameId": "color_sort",
+  "playTitle": "Color Sort",
+  "categories": [
+    {
+      "id": "red",
+      "label": "Red Bag",
+      "emoji": "📕",
+      "color": 4293212469,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "blue",
+      "label": "Blue Bag",
+      "emoji": "📘",
+      "color": 4280191205,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "green",
+      "label": "Green Bag",
+      "emoji": "📗",
+      "color": 4282622023,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "bright_red",
+      "name": "Bright Red Notebook",
+      "emoji": "📕",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4293212469
+    },
+    {
+      "id": "dark_red",
+      "name": "Dark Red Notebook",
+      "emoji": "❤️",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4291176488
+    },
+    {
+      "id": "light_red",
+      "name": "Light Red Notebook",
+      "emoji": "🌸",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4293892762
+    },
+    {
+      "id": "cherry_red",
+      "name": "Cherry Red Notebook",
+      "emoji": "🍒",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4292030255
+    },
+    {
+      "id": "crimson",
+      "name": "Crimson Notebook",
+      "emoji": "⭐",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4290190364
+    },
+    {
+      "id": "red_abc",
+      "name": "Red ABC Notebook",
+      "emoji": "🅰️",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4293212469
+    },
+    {
+      "id": "red_heart",
+      "name": "Red Hearts Notebook",
+      "emoji": "💕",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4292030255
+    },
+    {
+      "id": "bright_blue",
+      "name": "Bright Blue Notebook",
+      "emoji": "📘",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4280191205
+    },
+    {
+      "id": "sky_blue",
+      "name": "Sky Blue Notebook",
+      "emoji": "☁️",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4283417591
+    },
+    {
+      "id": "navy_blue",
+      "name": "Navy Blue Notebook",
+      "emoji": "🔷",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4279592384
+    },
+    {
+      "id": "royal_blue",
+      "name": "Royal Blue Notebook",
+      "emoji": "👑",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4281944491
+    },
+    {
+      "id": "aqua_blue",
+      "name": "Aqua Blue Notebook",
+      "emoji": "💧",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4280731354
+    },
+    {
+      "id": "blue_123",
+      "name": "Blue Numbers Notebook",
+      "emoji": "🔢",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4280191205
+    },
+    {
+      "id": "blue_fish",
+      "name": "Blue Fish Notebook",
+      "emoji": "🐠",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4283417591
+    },
+    {
+      "id": "bright_green",
+      "name": "Bright Green Notebook",
+      "emoji": "📗",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4282622023
+    },
+    {
+      "id": "lime_green",
+      "name": "Lime Green Notebook",
+      "emoji": "🍋",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4291681337
+    },
+    {
+      "id": "forest_green",
+      "name": "Forest Green Notebook",
+      "emoji": "🌲",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4281236786
+    },
+    {
+      "id": "mint_green",
+      "name": "Mint Green Notebook",
+      "emoji": "🍃",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4284922730
+    },
+    {
+      "id": "emerald",
+      "name": "Emerald Green Notebook",
+      "emoji": "💎",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4278241363
+    },
+    {
+      "id": "green_frog",
+      "name": "Green Frog Notebook",
+      "emoji": "🐸",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4284922730
+    },
+    {
+      "id": "green_star",
+      "name": "Green Stars Notebook",
+      "emoji": "🌟",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4282622023
+    }
+  ],
+  "celebrationSubtitle": "You're Becoming a Color Expert!",
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "red",
+        "blue",
+        "green"
+      ]
+    },
+    {
+      "id": "redOnly",
+      "label": "Red only",
+      "categoryIds": [
+        "red"
+      ]
+    },
+    {
+      "id": "blueOnly",
+      "label": "Blue only",
+      "categoryIds": [
+        "blue"
+      ]
+    },
+    {
+      "id": "greenOnly",
+      "label": "Green only",
+      "categoryIds": [
+        "green"
+      ]
+    }
+  ]
+}

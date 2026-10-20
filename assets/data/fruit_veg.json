@@ -1,0 +1,214 @@
+{
+  "gameId": "fruit_veg_sort",
+  "playTitle": "Fruit & Vegetable Sort",
+  "categories": [
+    {
+      "id": "fruits",
+      "label": "Fruits",
+      "emoji": "🍎",
+      "color": 4294937189,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "vegetables",
+      "label": "Vegetables",
+      "emoji": "🥕",
+      "color": 4286695300,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "apple",
+      "name": "Apple",
+      "emoji": "🍎",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "banana",
+      "name": "Banana",
+      "emoji": "🍌",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "orange",
+      "name": "Orange",
+      "emoji": "🍊",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "grapes",
+      "name": "Grapes",
+      "emoji": "🍇",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "mango",
+      "name": "Mango",
+      "emoji": "🥭",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "strawberry",
+      "name": "Strawberry",
+      "emoji": "🍓",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "pineapple",
+      "name": "Pineapple",
+      "emoji": "🍍",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "pear",
+      "name": "Pear",
+      "emoji": "🍐",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "cherries",
+      "name": "Cherries",
+      "emoji": "🍒",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "watermelon",
+      "name": "Watermelon",
+      "emoji": "🍉",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "peach",
+      "name": "Peach",
+      "emoji": "🍑",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "kiwi",
+      "name": "Kiwi",
+      "emoji": "🥝",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "blueberry",
+      "name": "Blueberry",
+      "emoji": "🫐",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "lemon",
+      "name": "Lemon",
+      "emoji": "🍋",
+      "categoryId": "fruits"
+    },
+    {
+      "id": "carrot",
+      "name": "Carrot",
+      "emoji": "🥕",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "tomato",
+      "name": "Tomato",
+      "emoji": "🍅",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "cucumber",
+      "name": "Cucumber",
+      "emoji": "🥒",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "potato",
+      "name": "Potato",
+      "emoji": "🥔",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "onion",
+      "name": "Onion",
+      "emoji": "🧅",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "broccoli",
+      "name": "Broccoli",
+      "emoji": "🥦",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "corn",
+      "name": "Corn",
+      "emoji": "🌽",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "eggplant",
+      "name": "Eggplant",
+      "emoji": "🍆",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "pumpkin",
+      "name": "Pumpkin",
+      "emoji": "🎃",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "peas",
+      "name": "Peas",
+      "emoji": "🫛",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "pepper",
+      "name": "Bell Pepper",
+      "emoji": "🫑",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "lettuce",
+      "name": "Lettuce",
+      "emoji": "🥬",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "garlic",
+      "name": "Garlic",
+      "emoji": "🧄",
+      "categoryId": "vegetables"
+    },
+    {
+      "id": "avocado",
+      "name": "Avocado",
+      "emoji": "🥑",
+      "categoryId": "vegetables"
+    }
+  ],
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "fruits",
+        "vegetables"
+      ]
+    },
+    {
+      "id": "fruitsOnly",
+      "label": "Fruits only",
+      "categoryIds": [
+        "fruits"
+      ]
+    },
+    {
+      "id": "vegetablesOnly",
+      "label": "Vegetables only",
+      "categoryIds": [
+        "vegetables"
+      ]
+    }
+  ]
+}

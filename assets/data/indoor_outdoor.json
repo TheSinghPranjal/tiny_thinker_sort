@@ -1,0 +1,298 @@
+{
+  "gameId": "indoor_outdoor_sort",
+  "playTitle": "Indoor & Outdoor Games Sort",
+  "categories": [
+    {
+      "id": "indoor",
+      "label": "Indoor Games",
+      "emoji": "🏠",
+      "color": 4294948685,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "outdoor",
+      "label": "Outdoor Games",
+      "emoji": "🌳",
+      "color": 4284922730,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "puzzle",
+      "name": "Puzzle",
+      "emoji": "🧩",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/puzzle.png"
+    },
+    {
+      "id": "blocks",
+      "name": "Building Blocks",
+      "emoji": "🧱",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/blocks.png"
+    },
+    {
+      "id": "board_game",
+      "name": "Board Game",
+      "emoji": "🎲",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/board_game.png"
+    },
+    {
+      "id": "coloring_book",
+      "name": "Coloring Book",
+      "emoji": "🎨",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/coloring_book.png"
+    },
+    {
+      "id": "toy_train",
+      "name": "Toy Train",
+      "emoji": "🚂",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/toy_train.png"
+    },
+    {
+      "id": "toy_car",
+      "name": "Toy Car",
+      "emoji": "🚙",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/toy_car.png"
+    },
+    {
+      "id": "doll",
+      "name": "Doll",
+      "emoji": "🪆",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/doll.png"
+    },
+    {
+      "id": "piano",
+      "name": "Piano",
+      "emoji": "🎹",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/piano.png"
+    },
+    {
+      "id": "drum",
+      "name": "Drum",
+      "emoji": "🥁",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/drum.png"
+    },
+    {
+      "id": "chess",
+      "name": "Chess",
+      "emoji": "♟️",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/chess.png"
+    },
+    {
+      "id": "ludo",
+      "name": "Ludo",
+      "emoji": "🎯",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/ludo.png"
+    },
+    {
+      "id": "snakes_ladders",
+      "name": "Snakes & Ladders",
+      "emoji": "🐍",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/snakes_ladders.png"
+    },
+    {
+      "id": "lego",
+      "name": "Lego Bricks",
+      "emoji": "🧱",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/lego.png"
+    },
+    {
+      "id": "memory_cards",
+      "name": "Memory Cards",
+      "emoji": "🃏",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/memory_cards.png"
+    },
+    {
+      "id": "reading_book",
+      "name": "Reading Book",
+      "emoji": "📖",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/reading_book.png"
+    },
+    {
+      "id": "teddy",
+      "name": "Teddy Bear",
+      "emoji": "🧸",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/teddy.png"
+    },
+    {
+      "id": "xylophone",
+      "name": "Xylophone",
+      "emoji": "🎵",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/xylophone.png"
+    },
+    {
+      "id": "robot",
+      "name": "Toy Robot",
+      "emoji": "🤖",
+      "categoryId": "indoor",
+      "imageAsset": "assets/items/indoor_outdoor/robot.png"
+    },
+    {
+      "id": "football",
+      "name": "Football",
+      "emoji": "⚽",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/football.png"
+    },
+    {
+      "id": "cricket",
+      "name": "Cricket Bat",
+      "emoji": "🏏",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/cricket.png"
+    },
+    {
+      "id": "basketball",
+      "name": "Basketball",
+      "emoji": "🏀",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/basketball.png"
+    },
+    {
+      "id": "badminton",
+      "name": "Badminton",
+      "emoji": "🏸",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/badminton.png"
+    },
+    {
+      "id": "bicycle",
+      "name": "Bicycle",
+      "emoji": "🚲",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/bicycle.png"
+    },
+    {
+      "id": "tricycle",
+      "name": "Tricycle",
+      "emoji": "🚲",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/tricycle.png"
+    },
+    {
+      "id": "skipping_rope",
+      "name": "Skipping Rope",
+      "emoji": "🪢",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/skipping_rope.png"
+    },
+    {
+      "id": "kite",
+      "name": "Kite",
+      "emoji": "🪁",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/kite.png"
+    },
+    {
+      "id": "frisbee",
+      "name": "Frisbee",
+      "emoji": "🥏",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/frisbee.png"
+    },
+    {
+      "id": "roller_skates",
+      "name": "Roller Skates",
+      "emoji": "🛼",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/roller_skates.png"
+    },
+    {
+      "id": "scooter",
+      "name": "Scooter",
+      "emoji": "🛴",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/scooter.png"
+    },
+    {
+      "id": "swing",
+      "name": "Swing",
+      "emoji": "🎠",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/swing.png"
+    },
+    {
+      "id": "slide",
+      "name": "Slide",
+      "emoji": "🛝",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/slide.png"
+    },
+    {
+      "id": "tennis",
+      "name": "Tennis Racket",
+      "emoji": "🎾",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/tennis.png"
+    },
+    {
+      "id": "volleyball",
+      "name": "Volleyball",
+      "emoji": "🏐",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/volleyball.png"
+    },
+    {
+      "id": "baseball",
+      "name": "Baseball Bat",
+      "emoji": "⚾",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/baseball.png"
+    },
+    {
+      "id": "hula_hoop",
+      "name": "Hula Hoop",
+      "emoji": "⭕",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/hula_hoop.png"
+    },
+    {
+      "id": "bubble_wand",
+      "name": "Bubble Wand",
+      "emoji": "🫧",
+      "categoryId": "outdoor",
+      "imageAsset": "assets/items/indoor_outdoor/bubble_wand.png"
+    }
+  ],
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "indoor",
+        "outdoor"
+      ]
+    },
+    {
+      "id": "indoorOnly",
+      "label": "Indoor only",
+      "categoryIds": [
+        "indoor"
+      ]
+    },
+    {
+      "id": "outdoorOnly",
+      "label": "Outdoor only",
+      "categoryIds": [
+        "outdoor"
+      ]
+    }
+  ]
+}

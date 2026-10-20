@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../data/healthy_food_data.dart';
+import '../../../data/game_catalog.dart';
+import '../../../models/game_modes.dart';
 import '../../../models/game_settings/healthy_food_settings.dart';
+import '../../../presentation/providers/game_library.dart';
 import '../common_controls_section.dart';
 
 class HealthyFoodControls extends StatelessWidget {
@@ -16,28 +19,26 @@ class HealthyFoodControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = context.read<GameLibrary>().content(GameCatalog.healthyFoodId);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Difficulty', style: TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),
-        for (final level in HealthyFoodDifficulty.values)
+        for (final level in content.difficulties)
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(switch (level) {
-              HealthyFoodDifficulty.beginner =>
-                'Beginner · Apple, Banana, Burger, Pizza',
-              HealthyFoodDifficulty.easy => 'Easy · 6 foods',
-              HealthyFoodDifficulty.medium => 'Medium · 10 foods',
-              HealthyFoodDifficulty.advanced =>
-                'Advanced · all enabled foods',
-            }),
+            title: Text(level.label),
             trailing: Icon(
-              settings.difficulty == level
+              settings.difficulty.name == level.id
                   ? Icons.check_circle_rounded
                   : Icons.circle_outlined,
             ),
-            onTap: () => onChanged(settings.copyWith(difficulty: level)),
+            onTap: () => onChanged(
+              settings.copyWith(
+                difficulty: HealthyFoodDifficulty.values.byName(level.id),
+              ),
+            ),
           ),
         const Text(
           'Healthy foods (at least 4)',
@@ -46,9 +47,9 @@ class HealthyFoodControls extends StatelessWidget {
         Wrap(
           spacing: 4,
           children: [
-            for (final foodId in HealthyFoodData.allHealthyIds)
+            for (final foodId in content.pools.allHealthyIds)
               FilterChip(
-                label: Text(HealthyFoodData.displayName(foodId)),
+                label: Text(content.displayName(foodId)),
                 selected: settings.enabledHealthyIds.contains(foodId),
                 onSelected: (selected) {
                   final next = List<String>.from(settings.enabledHealthyIds);
@@ -70,9 +71,9 @@ class HealthyFoodControls extends StatelessWidget {
         Wrap(
           spacing: 4,
           children: [
-            for (final foodId in HealthyFoodData.allJunkIds)
+            for (final foodId in content.pools.allJunkIds)
               FilterChip(
-                label: Text(HealthyFoodData.displayName(foodId)),
+                label: Text(content.displayName(foodId)),
                 selected: settings.enabledJunkIds.contains(foodId),
                 onSelected: (selected) {
                   final next = List<String>.from(settings.enabledJunkIds);

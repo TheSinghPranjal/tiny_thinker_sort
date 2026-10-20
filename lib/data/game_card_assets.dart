@@ -15,6 +15,7 @@ abstract final class GameCardAssets {
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
           const Color(0xFF2E2160),
         'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF16324F),
+        'animal_sort' => const Color(0xFF1B5E20),
         'flower_garden' => const Color(0xFFD81B60),
         'clean_dirty_sort' => const Color(0xFF0277BD),
         _ => const Color(0xFF254A9A),
@@ -26,6 +27,7 @@ abstract final class GameCardAssets {
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
           const Color(0xFF9B6BFA),
         'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF26B5A8),
+        'animal_sort' => const Color(0xFF43A047),
         'flower_garden' => SortJoyColors.berry,
         'clean_dirty_sort' => const Color(0xFF4FC3F7),
         _ => const Color(0xFF4F9EFF),

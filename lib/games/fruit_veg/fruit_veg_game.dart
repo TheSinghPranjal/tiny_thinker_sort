@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/fruit_veg_data.dart';
 import '../../data/game_catalog.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
-import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../models/game_modes.dart';
+import '../../games/sorting_engine/sorting_play_screen.dart';
+import '../../presentation/providers/game_library.dart';
 import '../../state/app_state.dart';
 import '../../widgets/app_background.dart';
 
 Future<void> openFruitVegGame(BuildContext context) async {
   final app = context.read<AppState>();
+  final library = context.read<GameLibrary>();
   final s = app.gameSettings.fruitVeg;
   final c = s.common;
+  final content = library.content(GameCatalog.fruitVegId);
+  final round = library.roundFor(GameCatalog.fruitVegId, s.mode.name);
   final baseSize = c.largerTouchTargets ? 124.0 : 106.0;
 
   final config = SortingEngineConfig(
     gameId: GameCatalog.fruitVegId,
-    categories: FruitVegData.categoriesForMode(s.mode),
-    itemPool: FruitVegData.itemsForMode(s.mode),
+    categories: round.categories,
+    itemPool: round.items,
     sessionSeconds: c.sessionSeconds,
     maxFloating: s.floatingItemCount.clamp(2, 8),
     speedMultiplier: s.speed.multiplier,
@@ -45,7 +48,7 @@ Future<void> openFruitVegGame(BuildContext context) async {
       builder: (_) => SortingPlayScreen(
         config: config,
         background: const AppBackground(),
-        title: 'Fruit & Vegetable Sort',
+        title: content.playTitle,
       ),
     ),
   );

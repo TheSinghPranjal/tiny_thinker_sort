@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/game_catalog.dart';
-import '../../data/indoor_outdoor_data.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
-import '../../games/sorting_engine/sorting_play_screen.dart';
 import '../../models/game_modes.dart';
+import '../../games/sorting_engine/sorting_play_screen.dart';
+import '../../presentation/providers/game_library.dart';
 import '../../state/app_state.dart';
 import '../../widgets/app_background.dart';
 
 Future<void> openIndoorOutdoorGame(BuildContext context) async {
   final app = context.read<AppState>();
+  final library = context.read<GameLibrary>();
   final s = app.gameSettings.indoorOutdoor;
   final c = s.common;
+  final content = library.content(GameCatalog.indoorOutdoorId);
+  final round = library.roundFor(GameCatalog.indoorOutdoorId, s.mode.name);
   final baseSize = c.largerTouchTargets ? 90.0 : 72.0;
 
   final config = SortingEngineConfig(
     gameId: GameCatalog.indoorOutdoorId,
-    categories: IndoorOutdoorData.categoriesForMode(s.mode),
-    itemPool: IndoorOutdoorData.itemsForMode(s.mode),
+    categories: round.categories,
+    itemPool: round.items,
     sessionSeconds: c.sessionSeconds,
     maxFloating: s.floatingItemCount.clamp(2, 8),
     speedMultiplier: s.speed.multiplier,
@@ -43,7 +46,7 @@ Future<void> openIndoorOutdoorGame(BuildContext context) async {
       builder: (_) => SortingPlayScreen(
         config: config,
         background: const AppBackground(),
-        title: 'Indoor & Outdoor Games Sort',
+        title: content.playTitle,
       ),
     ),
   );

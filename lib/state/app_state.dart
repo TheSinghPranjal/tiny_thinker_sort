@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/age_world.dart';
 import '../models/parent_settings.dart';
 import '../models/rewards.dart';
+import '../presentation/providers/game_library.dart';
 import 'game_settings_store.dart';
 
 class AppState extends ChangeNotifier {
@@ -23,7 +24,7 @@ class AppState extends ChangeNotifier {
   RewardsState rewards = const RewardsState();
   final GameSettingsStore gameSettings = GameSettingsStore();
 
-  Future<void> load() async {
+  Future<void> load({GameLibrary? library}) async {
     final prefs = await SharedPreferences.getInstance();
     onboarded = prefs.getBool(_keyOnboarded) ?? false;
     final ageKey = prefs.getString(_keyAge);
@@ -59,7 +60,10 @@ class AppState extends ChangeNotifier {
     }
     rewards = _rollDailyIfNeeded(rewards);
 
-    await gameSettings.load(legacySettings: legacySettings);
+    await gameSettings.load(
+      legacySettings: legacySettings,
+      library: library,
+    );
     gameSettings.addListener(_onGameSettingsChanged);
 
     // Persist slim global settings if we still had a monolithic blob.

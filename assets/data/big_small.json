@@ -1,0 +1,367 @@
+{
+  "gameId": "big_small_sort_tiny",
+  "playTitle": "Big & Small Sort",
+  "categories": [
+    {
+      "id": "big",
+      "label": "Big Objects",
+      "emoji": "🐘",
+      "color": 4286470082,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "small",
+      "label": "Small Objects",
+      "emoji": "🐭",
+      "color": 4294937189,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "ship",
+      "name": "Ship",
+      "emoji": "🚢",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/ship.png"
+    },
+    {
+      "id": "house",
+      "name": "House",
+      "emoji": "🏠",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/house.png"
+    },
+    {
+      "id": "tree",
+      "name": "Tree",
+      "emoji": "🌳",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/tree.png"
+    },
+    {
+      "id": "airplane",
+      "name": "Airplane",
+      "emoji": "✈️",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/airplane.png"
+    },
+    {
+      "id": "bus",
+      "name": "Bus",
+      "emoji": "🚌",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/bus.png"
+    },
+    {
+      "id": "train",
+      "name": "Train",
+      "emoji": "🚂",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/train.png"
+    },
+    {
+      "id": "elephant",
+      "name": "Elephant",
+      "emoji": "🐘",
+      "categoryId": "big",
+      "visualScale": 1.3,
+      "imageAsset": "assets/items/big_small/elephant.png"
+    },
+    {
+      "id": "giraffe",
+      "name": "Giraffe",
+      "emoji": "🦒",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/giraffe.png"
+    },
+    {
+      "id": "whale",
+      "name": "Whale",
+      "emoji": "🐋",
+      "categoryId": "big",
+      "visualScale": 1.3,
+      "imageAsset": "assets/items/big_small/whale.png"
+    },
+    {
+      "id": "mountain",
+      "name": "Mountain",
+      "emoji": "⛰️",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/mountain.png"
+    },
+    {
+      "id": "building",
+      "name": "Building",
+      "emoji": "🏢",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/building.png"
+    },
+    {
+      "id": "truck",
+      "name": "Truck",
+      "emoji": "🚚",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/truck.png"
+    },
+    {
+      "id": "hot_air_balloon",
+      "name": "Hot Air Balloon",
+      "emoji": "🎈",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/hot_air_balloon.png"
+    },
+    {
+      "id": "volcano",
+      "name": "Volcano",
+      "emoji": "🌋",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/volcano.png"
+    },
+    {
+      "id": "dinosaur",
+      "name": "Dinosaur",
+      "emoji": "🦕",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/dinosaur.png"
+    },
+    {
+      "id": "castle",
+      "name": "Castle",
+      "emoji": "🏰",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/castle.png"
+    },
+    {
+      "id": "bridge",
+      "name": "Bridge",
+      "emoji": "🌉",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/bridge.png"
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket",
+      "emoji": "🚀",
+      "categoryId": "big",
+      "visualScale": 1.2,
+      "imageAsset": "assets/items/big_small/rocket.png"
+    },
+    {
+      "id": "water_tank",
+      "name": "Water Tank",
+      "emoji": "🛢️",
+      "categoryId": "big",
+      "visualScale": 1.15,
+      "imageAsset": "assets/items/big_small/water_tank.png"
+    },
+    {
+      "id": "ferris_wheel",
+      "name": "Ferris Wheel",
+      "emoji": "🎡",
+      "categoryId": "big",
+      "visualScale": 1.25,
+      "imageAsset": "assets/items/big_small/ferris_wheel.png"
+    },
+    {
+      "id": "mouse",
+      "name": "Mouse",
+      "emoji": "🐭",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/mouse.png"
+    },
+    {
+      "id": "book",
+      "name": "Book",
+      "emoji": "📖",
+      "categoryId": "small",
+      "visualScale": 0.85,
+      "imageAsset": "assets/items/big_small/book.png"
+    },
+    {
+      "id": "pen",
+      "name": "Pen",
+      "emoji": "🖊️",
+      "categoryId": "small",
+      "visualScale": 0.8,
+      "imageAsset": "assets/items/big_small/pen.png"
+    },
+    {
+      "id": "pencil",
+      "name": "Pencil",
+      "emoji": "✏️",
+      "categoryId": "small",
+      "visualScale": 0.8,
+      "imageAsset": "assets/items/big_small/pencil.png"
+    },
+    {
+      "id": "spoon",
+      "name": "Spoon",
+      "emoji": "🥄",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/spoon.png"
+    },
+    {
+      "id": "toothbrush",
+      "name": "Toothbrush",
+      "emoji": "🪥",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/toothbrush.png"
+    },
+    {
+      "id": "key",
+      "name": "Key",
+      "emoji": "🔑",
+      "categoryId": "small",
+      "visualScale": 0.8,
+      "imageAsset": "assets/items/big_small/key.png"
+    },
+    {
+      "id": "coin",
+      "name": "Coin",
+      "emoji": "🪙",
+      "categoryId": "small",
+      "visualScale": 0.78,
+      "imageAsset": "assets/items/big_small/coin.png"
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "emoji": "🍎",
+      "categoryId": "small",
+      "visualScale": 0.85,
+      "imageAsset": "assets/items/big_small/apple.png"
+    },
+    {
+      "id": "cup",
+      "name": "Cup",
+      "emoji": "☕",
+      "categoryId": "small",
+      "visualScale": 0.85,
+      "imageAsset": "assets/items/big_small/cup.png"
+    },
+    {
+      "id": "toy_car",
+      "name": "Toy Car",
+      "emoji": "🚗",
+      "categoryId": "small",
+      "visualScale": 0.85,
+      "imageAsset": "assets/items/big_small/toy_car.png"
+    },
+    {
+      "id": "butterfly",
+      "name": "Butterfly",
+      "emoji": "🦋",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/butterfly.png"
+    },
+    {
+      "id": "leaf",
+      "name": "Leaf",
+      "emoji": "🍃",
+      "categoryId": "small",
+      "visualScale": 0.8,
+      "imageAsset": "assets/items/big_small/leaf.png"
+    },
+    {
+      "id": "flower",
+      "name": "Flower",
+      "emoji": "🌸",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/flower.png"
+    },
+    {
+      "id": "ball",
+      "name": "Ball",
+      "emoji": "⚾",
+      "categoryId": "small",
+      "visualScale": 0.85,
+      "imageAsset": "assets/items/big_small/ball.png"
+    },
+    {
+      "id": "marble",
+      "name": "Marble",
+      "emoji": "🔵",
+      "categoryId": "small",
+      "visualScale": 0.75,
+      "imageAsset": "assets/items/big_small/marble.png"
+    },
+    {
+      "id": "sponge",
+      "name": "Sponge",
+      "emoji": "🧽",
+      "categoryId": "small",
+      "visualScale": 0.8,
+      "imageAsset": "assets/items/big_small/sponge.png"
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "emoji": "🔘",
+      "categoryId": "small",
+      "visualScale": 0.75,
+      "imageAsset": "assets/items/big_small/button.png"
+    },
+    {
+      "id": "scissors",
+      "name": "Scissors",
+      "emoji": "✂️",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/scissors.png"
+    },
+    {
+      "id": "watch",
+      "name": "Wrist Watch",
+      "emoji": "⌚",
+      "categoryId": "small",
+      "visualScale": 0.82,
+      "imageAsset": "assets/items/big_small/watch.png"
+    }
+  ],
+  "celebrationSubtitle": "You're Becoming a Size Expert!",
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "big",
+        "small"
+      ]
+    },
+    {
+      "id": "bigOnly",
+      "label": "Big only",
+      "categoryIds": [
+        "big"
+      ]
+    },
+    {
+      "id": "smallOnly",
+      "label": "Small only",
+      "categoryIds": [
+        "small"
+      ]
+    }
+  ]
+}

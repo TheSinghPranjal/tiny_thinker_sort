@@ -2,34 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/game_catalog.dart';
-import '../../data/sort_socks_data.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
+import '../../presentation/providers/game_library.dart';
 import '../../state/app_state.dart';
 import '../../widgets/app_background.dart';
 
 Future<void> openSortSocksGame(BuildContext context) async {
   final app = context.read<AppState>();
+  final library = context.read<GameLibrary>();
   final s = app.gameSettings.sortSocks;
   final c = s.common;
-
-  final categories = SortSocksData.pickCategories(
-    enabledColorIds: s.enabledColors,
-    laundryBagCount: s.laundryBagCount,
+  final content = library.content(GameCatalog.sortSocksId);
+  final round = library.matchRound(
+    gameId: GameCatalog.sortSocksId,
+    enabledIds: s.enabledColors,
+    count: s.laundryBagCount,
   );
-  final itemPool = SortSocksData.itemsForCategories(categories);
   final itemSize = c.largerTouchTargets ? 140.0 : 120.0;
 
   final config = SortingEngineConfig(
     gameId: GameCatalog.sortSocksId,
-    categories: categories,
-    itemPool: itemPool,
+    categories: round.categories,
+    itemPool: round.items,
     sessionSeconds: c.sessionSeconds,
     maxFloating: 1,
     speedMultiplier: 0.65,
     voiceEnabled: c.narrationEnabled,
     celebrationsEnabled: c.celebrationsEnabled,
-    celebrationSubtitle: "You're learning colors!",
+    celebrationSubtitle:
+        content.celebrationSubtitle ?? "You're Becoming a Super Sorter!",
     starsPerCorrectSort: 10,
     coinsPerCorrectSort: 10,
     celebrateEveryN: 5,
@@ -37,7 +39,7 @@ Future<void> openSortSocksGame(BuildContext context) async {
     snapPadding: c.largerTouchTargets ? 64 : 48,
     itemSize: itemSize,
     sockShape: true,
-    categoryEmoji: '🧺',
+    categoryEmoji: content.categoryEmoji,
     hideCoinHud: true,
     soundEnabled: c.soundEnabled,
     musicEnabled: c.musicEnabled,
@@ -54,7 +56,7 @@ Future<void> openSortSocksGame(BuildContext context) async {
       builder: (_) => SortingPlayScreen(
         config: config,
         background: const AppBackground(),
-        title: 'Sort Socks',
+        title: content.playTitle,
       ),
     ),
   );

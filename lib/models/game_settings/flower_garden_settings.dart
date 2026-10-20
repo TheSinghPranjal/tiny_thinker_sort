@@ -7,7 +7,7 @@ class FlowerGardenSettings extends Equatable {
   const FlowerGardenSettings({
     this.common = const CommonGameControls(practiceMode: true),
     this.difficulty = FlowerGardenDifficulty.level3,
-    this.enabledColors = FlowerGardenDefaults.enabled,
+    this.enabledColors = const [],
   });
 
   final CommonGameControls common;
@@ -41,9 +41,13 @@ class FlowerGardenSettings extends Equatable {
         'enabledColors': enabledColors,
       };
 
-  factory FlowerGardenSettings.fromJson(Map<String, dynamic> json) {
+  factory FlowerGardenSettings.fromJson(
+    Map<String, dynamic> json, {
+    List<String> defaultColors = const [],
+  }) {
     final colors = _parseColors(
       json['enabledColors'] ?? json['flowerGardenEnabledColors'],
+      defaultColors,
     );
     final practice = (json['practiceMode'] as bool?) ??
         (json['flowerGardenUnlimitedTime'] as bool?) ??
@@ -66,12 +70,12 @@ class FlowerGardenSettings extends Equatable {
     );
   }
 
-  static List<String> _parseColors(Object? raw) {
+  static List<String> _parseColors(Object? raw, List<String> fallback) {
     if (raw is List) {
       final ids = raw.whereType<String>().toList();
       if (ids.length >= 2) return ids;
     }
-    return FlowerGardenDefaults.enabled;
+    return fallback;
   }
 
   @override

@@ -5,8 +5,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/entities/sort_category.dart';
 import '../../models/game_definition.dart';
 import '../../models/rewards.dart';
+import '../../presentation/widgets/habitat_drop_zone.dart';
+import '../../presentation/widgets/item_glyph.dart';
 import '../../screens/parent_zone_screen.dart';
 import '../../state/app_state.dart';
 import '../../theme/sortjoy_theme.dart';
@@ -15,8 +18,6 @@ import '../../widgets/soft_toast.dart';
 import '../../widgets/app_background.dart';
 import '../healthy_food/food_bubble_chip.dart';
 import '../healthy_food/toddler_drop_zone.dart';
-import '../../data/clean_dirty_data.dart';
-import '../../data/healthy_food_data.dart';
 import '../clean_dirty/clothing_chip.dart';
 import '../clean_dirty/laundry_drop_zones.dart';
 import '../clean_dirty/laundry_room_background.dart';
@@ -31,11 +32,15 @@ class SortingPlayScreen extends StatefulWidget {
     required this.config,
     required this.background,
     this.title = 'SortJoy',
+    this.random,
   });
 
   final SortingEngineConfig config;
   final Widget background;
   final String title;
+
+  /// Optional seed so tests can lay items out the same way every run.
+  final Random? random;
 
   @override
   State<SortingPlayScreen> createState() => _SortingPlayScreenState();
@@ -58,7 +63,11 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
     for (final c in widget.config.categories) {
       _zoneKeys[c.id] = GlobalKey();
     }
-    _engine = SortingEngine(config: widget.config, onChanged: _onEngineChanged);
+    _engine = SortingEngine(
+      config: widget.config,
+      onChanged: _onEngineChanged,
+      random: widget.random,
+    );
     _ticker = createTicker((_) => _engine.tick())..start();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -364,14 +373,36 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                       ) ...[
                         if (i > 0) const SizedBox(width: 12),
                         Expanded(
-                          child: widget.config.laundryZones
+                          child: _isHabitat(widget.config.categories[i])
+                              ? HabitatDropZone(
+                                  key:
+                                      _zoneKeys[widget.config.categories[i].id],
+                                  category: widget.config.categories[i],
+                                  glow:
+                                      snap.guidanceCategoryId ==
+                                          widget.config.categories[i].id ||
+                                      snap.idleHint &&
+                                          _engine.items.isNotEmpty &&
+                                          _engine.items.first.item.categoryId ==
+                                              widget.config.categories[i].id,
+                                  wiggle:
+                                      snap.guidanceCategoryId != null &&
+                                      snap.guidanceCategoryId !=
+                                          widget.config.categories[i].id,
+                                  count:
+                                      snap.categoryCounts[widget
+                                          .config
+                                          .categories[i]
+                                          .id] ??
+                                      0,
+                                )
+                              : widget.config.laundryZones
                               ? LaundryDropZone(
                                   key:
                                       _zoneKeys[widget.config.categories[i].id],
                                   category: widget.config.categories[i],
                                   isWashingMachine:
-                                      widget.config.categories[i].id ==
-                                      CleanDirtyData.dirtyCategoryId,
+                                      widget.config.categories[i].id == 'dirty',
                                   glow:
                                       snap.guidanceCategoryId ==
                                           widget.config.categories[i].id ||
@@ -422,7 +453,7 @@ class _SortingPlayScreenState extends State<SortingPlayScreen>
                                       0,
                                   isHealthyHero:
                                       widget.config.categories[i].id ==
-                                      HealthyFoodData.healthyCategoryId,
+                                      'healthy',
                                   reaction:
                                       snap.happyDropCategoryId ==
                                           widget.config.categories[i].id
@@ -781,6 +812,9 @@ class _DropBasketState extends State<_DropBasket>
   }
 }
 
+bool _isHabitat(SortCategory category) =>
+    category.zoneStyle == 'house' || category.zoneStyle == 'jungle';
+
 class _DraggableFloatingItem extends StatelessWidget {
   const _DraggableFloatingItem({
     super.key,
@@ -845,7 +879,7 @@ class _DraggableFloatingItem extends StatelessWidget {
                 ? ClothingChip(
                     emoji: item.item.emoji,
                     size: itemSize,
-                    isDirty: CleanDirtyData.isDirty(item.item),
+                    isDirty: item.item.categoryId == 'dirty',
                     accentColor: item.item.accentColor,
                   )
                 : flowerShape
@@ -873,7 +907,7 @@ class _DraggableFloatingItem extends StatelessWidget {
                 : Container(
                     width: itemSize,
                     height: itemSize,
-                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(itemSize * 0.14),
                     decoration: BoxDecoration(
                       color: item.item.accentColor != null
                           ? accent.withValues(alpha: 0.92)
@@ -890,9 +924,10 @@ class _DraggableFloatingItem extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Text(
-                      item.item.emoji,
-                      style: TextStyle(fontSize: itemSize * 0.5),
+                    child: ItemGlyph(
+                      emoji: item.item.emoji,
+                      imageAsset: item.item.imageAsset,
+                      fontSize: itemSize * 0.5,
                     ),
                   ),
           ),

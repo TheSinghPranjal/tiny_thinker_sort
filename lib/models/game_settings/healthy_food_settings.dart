@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-import '../../data/healthy_food_data.dart';
+import '../game_modes.dart';
 import 'common_game_controls.dart';
 
 class HealthyFoodSettings extends Equatable {
   const HealthyFoodSettings({
     this.common = const CommonGameControls(practiceMode: true),
     this.difficulty = HealthyFoodDifficulty.beginner,
-    this.enabledHealthyIds = HealthyFoodDefaults.enabledHealthy,
-    this.enabledJunkIds = HealthyFoodDefaults.enabledJunk,
+    this.enabledHealthyIds = const [],
+    this.enabledJunkIds = const [],
   });
 
   final CommonGameControls common;
@@ -45,7 +45,11 @@ class HealthyFoodSettings extends Equatable {
         'enabledJunkIds': enabledJunkIds,
       };
 
-  factory HealthyFoodSettings.fromJson(Map<String, dynamic> json) {
+  factory HealthyFoodSettings.fromJson(
+    Map<String, dynamic> json, {
+    List<String> defaultHealthyIds = const [],
+    List<String> defaultJunkIds = const [],
+  }) {
     final practice = (json['practiceMode'] as bool?) ??
         (json['healthyFoodUnlimitedTime'] as bool?) ??
         true;
@@ -65,12 +69,12 @@ class HealthyFoodSettings extends Equatable {
       ),
       enabledHealthyIds: _parseList(
         json['enabledHealthyIds'] ?? json['healthyFoodEnabledHealthyIds'],
-        HealthyFoodDefaults.enabledHealthy,
+        defaultHealthyIds,
         minCount: 4,
       ),
       enabledJunkIds: _parseList(
         json['enabledJunkIds'] ?? json['healthyFoodEnabledJunkIds'],
-        HealthyFoodDefaults.enabledJunk,
+        defaultJunkIds,
         minCount: 4,
       ),
     );

@@ -20,12 +20,12 @@ enum BigSmallMode { mixed, bigOnly, smallOnly }
 
 enum CleanDirtyMode { mixed, cleanOnly, dirtyOnly }
 
+enum PetWildMode { mixed, petsOnly, wildOnly }
+
+enum HealthyFoodDifficulty { beginner, easy, medium, advanced }
+
 /// Backpack count per session for Color School Bags (Level 1 = 2, etc.).
 enum ColorSchoolBagsDifficulty { level2, level3, level4, level5, level6 }
-
-abstract final class ColorSchoolBagsDefaults {
-  static const enabled = ['red', 'blue', 'green', 'yellow'];
-}
 
 extension ColorSchoolBagsDifficultyX on ColorSchoolBagsDifficulty {
   int get backpackCount => switch (this) {
@@ -40,10 +40,6 @@ extension ColorSchoolBagsDifficultyX on ColorSchoolBagsDifficulty {
 /// Laundry bag count per session for Sort Socks (Level 1 = 2, etc.).
 enum SortSocksDifficulty { level2, level3, level4, level5, level6 }
 
-abstract final class SortSocksDefaults {
-  static const enabled = ['red', 'blue', 'green', 'yellow'];
-}
-
 extension SortSocksDifficultyX on SortSocksDifficulty {
   int get laundryBagCount => switch (this) {
         SortSocksDifficulty.level2 => 2,
@@ -56,10 +52,6 @@ extension SortSocksDifficultyX on SortSocksDifficulty {
 
 /// Flower pot count per session for Flower Garden (Level 1 = 2, etc.).
 enum FlowerGardenDifficulty { level2, level3, level4, level5 }
-
-abstract final class FlowerGardenDefaults {
-  static const enabled = ['pink', 'yellow', 'red'];
-}
 
 extension FlowerGardenDifficultyX on FlowerGardenDifficulty {
   int get potCount => switch (this) {

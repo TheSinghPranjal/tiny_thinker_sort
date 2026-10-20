@@ -2,11 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tiny_thinker_sort/data/fruit_veg_data.dart';
+import 'package:tiny_thinker_sort/data/repositories/asset_game_content_repository.dart';
+import 'package:tiny_thinker_sort/domain/entities/game_ids.dart';
 import 'package:tiny_thinker_sort/games/sorting_engine/sorting_engine.dart';
 import 'package:tiny_thinker_sort/models/game_modes.dart';
 import 'package:tiny_thinker_sort/models/rewards.dart';
+import 'package:tiny_thinker_sort/presentation/providers/game_library.dart';
 import 'package:tiny_thinker_sort/state/app_state.dart';
+
+late GameLibrary _library;
 
 SortingEngine _engine({
   int sessionSeconds = 60,
@@ -19,8 +23,12 @@ SortingEngine _engine({
   final e = SortingEngine(
     config: SortingEngineConfig(
       gameId: 'fruit_veg_sort',
-      categories: FruitVegData.categoriesForMode(FruitVegMode.mixed),
-      itemPool: FruitVegData.itemsForMode(FruitVegMode.mixed),
+      categories: _library
+          .roundFor(GameIds.fruitVeg, FruitVegMode.mixed.name)
+          .categories,
+      itemPool: _library
+          .roundFor(GameIds.fruitVeg, FruitVegMode.mixed.name)
+          .items,
       sessionSeconds: sessionSeconds,
       maxFloating: 3,
       speedMultiplier: 1,
@@ -51,6 +59,10 @@ String _dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    _library = GameLibrary(await AssetGameContentRepository.load());
+  });
 
   group('SortingEngine rewards', () {
     test('default games: 3 coins per sort, 1 star per 3 sorts', () {

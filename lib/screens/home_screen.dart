@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../data/game_catalog.dart';
 import '../models/age_world.dart';
+import '../presentation/providers/game_library.dart';
 import '../models/game_definition.dart';
 import '../state/app_state.dart';
 import '../data/game_card_assets.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final world = app.ageWorld ?? AgeWorld.tinyLearners;
-    final games = GameCatalog.forWorld(world);
+    final games = context.read<GameLibrary>().gamesFor(world);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return GradientScaffold(

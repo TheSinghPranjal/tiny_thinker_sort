@@ -1,0 +1,351 @@
+{
+  "gameId": "sort_socks",
+  "playTitle": "Sort Socks",
+  "categories": [
+    {
+      "id": "red",
+      "label": "Red",
+      "emoji": "🧺",
+      "color": 4293212469,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "blue",
+      "label": "Blue",
+      "emoji": "🧺",
+      "color": 4280191205,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "green",
+      "label": "Green",
+      "emoji": "🧺",
+      "color": 4282622023,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "yellow",
+      "label": "Yellow",
+      "emoji": "🧺",
+      "color": 4294826037,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "orange",
+      "label": "Orange",
+      "emoji": "🧺",
+      "color": 4294675456,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "pink",
+      "label": "Pink",
+      "emoji": "🧺",
+      "color": 4293673082,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "purple",
+      "label": "Purple",
+      "emoji": "🧺",
+      "color": 4287505578,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "brown",
+      "label": "Brown",
+      "emoji": "🧺",
+      "color": 4285353025,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "grey",
+      "label": "Grey",
+      "emoji": "🧺",
+      "color": 4286091420,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "black",
+      "label": "Black",
+      "emoji": "🧺",
+      "color": 4281812815,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "white",
+      "label": "White",
+      "emoji": "🧺",
+      "color": 4293718001,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "sky_blue",
+      "label": "Sky Blue",
+      "emoji": "🧺",
+      "color": 4283417591,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "navy",
+      "label": "Navy",
+      "emoji": "🧺",
+      "color": 4279592384,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "light_blue",
+      "label": "Light Blue",
+      "emoji": "🧺",
+      "color": 4286698746,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "light_green",
+      "label": "Light Green",
+      "emoji": "🧺",
+      "color": 4286695300,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "magenta",
+      "label": "Magenta",
+      "emoji": "🧺",
+      "color": 4292352864,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "lilac",
+      "label": "Lilac",
+      "emoji": "🧺",
+      "color": 4291728344,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "silver",
+      "label": "Silver",
+      "emoji": "🧺",
+      "color": 4289773253,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "gold",
+      "label": "Gold",
+      "emoji": "🧺",
+      "color": 4294956367,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "sock_red",
+      "name": "Red Sock",
+      "emoji": "🧦",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4293212469
+    },
+    {
+      "id": "sock_blue",
+      "name": "Blue Sock",
+      "emoji": "🧦",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4280191205
+    },
+    {
+      "id": "sock_green",
+      "name": "Green Sock",
+      "emoji": "🧦",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4282622023
+    },
+    {
+      "id": "sock_yellow",
+      "name": "Yellow Sock",
+      "emoji": "🧦",
+      "categoryId": "yellow",
+      "voiceName": "Yellow",
+      "accentColor": 4294826037
+    },
+    {
+      "id": "sock_orange",
+      "name": "Orange Sock",
+      "emoji": "🧦",
+      "categoryId": "orange",
+      "voiceName": "Orange",
+      "accentColor": 4294675456
+    },
+    {
+      "id": "sock_pink",
+      "name": "Pink Sock",
+      "emoji": "🧦",
+      "categoryId": "pink",
+      "voiceName": "Pink",
+      "accentColor": 4293673082
+    },
+    {
+      "id": "sock_purple",
+      "name": "Purple Sock",
+      "emoji": "🧦",
+      "categoryId": "purple",
+      "voiceName": "Purple",
+      "accentColor": 4287505578
+    },
+    {
+      "id": "sock_brown",
+      "name": "Brown Sock",
+      "emoji": "🧦",
+      "categoryId": "brown",
+      "voiceName": "Brown",
+      "accentColor": 4285353025
+    },
+    {
+      "id": "sock_grey",
+      "name": "Grey Sock",
+      "emoji": "🧦",
+      "categoryId": "grey",
+      "voiceName": "Grey",
+      "accentColor": 4286091420
+    },
+    {
+      "id": "sock_black",
+      "name": "Black Sock",
+      "emoji": "🧦",
+      "categoryId": "black",
+      "voiceName": "Black",
+      "accentColor": 4281812815
+    },
+    {
+      "id": "sock_white",
+      "name": "White Sock",
+      "emoji": "🧦",
+      "categoryId": "white",
+      "voiceName": "White",
+      "accentColor": 4293718001
+    },
+    {
+      "id": "sock_sky_blue",
+      "name": "Sky Blue Sock",
+      "emoji": "🧦",
+      "categoryId": "sky_blue",
+      "voiceName": "Sky Blue",
+      "accentColor": 4283417591
+    },
+    {
+      "id": "sock_navy",
+      "name": "Navy Sock",
+      "emoji": "🧦",
+      "categoryId": "navy",
+      "voiceName": "Navy",
+      "accentColor": 4279592384
+    },
+    {
+      "id": "sock_light_blue",
+      "name": "Light Blue Sock",
+      "emoji": "🧦",
+      "categoryId": "light_blue",
+      "voiceName": "Light Blue",
+      "accentColor": 4286698746
+    },
+    {
+      "id": "sock_light_green",
+      "name": "Light Green Sock",
+      "emoji": "🧦",
+      "categoryId": "light_green",
+      "voiceName": "Light Green",
+      "accentColor": 4286695300
+    },
+    {
+      "id": "sock_magenta",
+      "name": "Magenta Sock",
+      "emoji": "🧦",
+      "categoryId": "magenta",
+      "voiceName": "Magenta",
+      "accentColor": 4292352864
+    },
+    {
+      "id": "sock_lilac",
+      "name": "Lilac Sock",
+      "emoji": "🧦",
+      "categoryId": "lilac",
+      "voiceName": "Lilac",
+      "accentColor": 4291728344
+    },
+    {
+      "id": "sock_silver",
+      "name": "Silver Sock",
+      "emoji": "🧦",
+      "categoryId": "silver",
+      "voiceName": "Silver",
+      "accentColor": 4289773253
+    },
+    {
+      "id": "sock_gold",
+      "name": "Gold Sock",
+      "emoji": "🧦",
+      "categoryId": "gold",
+      "voiceName": "Gold",
+      "accentColor": 4294956367
+    }
+  ],
+  "celebrationSubtitle": "You're learning colors!",
+  "categoryEmoji": "🧺",
+  "difficulties": [
+    {
+      "id": "level2",
+      "label": "Level 1 · 2 laundry bags",
+      "count": 2
+    },
+    {
+      "id": "level3",
+      "label": "Level 2 · 3 laundry bags",
+      "count": 3
+    },
+    {
+      "id": "level4",
+      "label": "Level 3 · 4 laundry bags",
+      "count": 4
+    },
+    {
+      "id": "level5",
+      "label": "Advanced · 5 laundry bags",
+      "count": 5
+    },
+    {
+      "id": "level6",
+      "label": "Advanced · 6 laundry bags",
+      "count": 6
+    }
+  ],
+  "pools": {
+    "defaultEnabledIds": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "allSelectableIds": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "orange",
+      "pink",
+      "purple",
+      "brown",
+      "grey",
+      "black",
+      "white",
+      "sky_blue",
+      "navy",
+      "light_blue",
+      "light_green",
+      "magenta",
+      "lilac",
+      "silver",
+      "gold"
+    ]
+  }
+}

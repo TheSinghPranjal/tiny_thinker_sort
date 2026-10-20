@@ -7,7 +7,7 @@ class ColorSchoolBagsSettings extends Equatable {
   const ColorSchoolBagsSettings({
     this.common = const CommonGameControls(practiceMode: true),
     this.difficulty = ColorSchoolBagsDifficulty.level2,
-    this.enabledColors = ColorSchoolBagsDefaults.enabled,
+    this.enabledColors = const [],
   });
 
   final CommonGameControls common;
@@ -41,8 +41,14 @@ class ColorSchoolBagsSettings extends Equatable {
         'enabledColors': enabledColors,
       };
 
-  factory ColorSchoolBagsSettings.fromJson(Map<String, dynamic> json) {
-    final colors = _parseColors(json['enabledColors'] ?? json['colorSchoolBagsEnabledColors']);
+  factory ColorSchoolBagsSettings.fromJson(
+    Map<String, dynamic> json, {
+    List<String> defaultColors = const [],
+  }) {
+    final colors = _parseColors(
+      json['enabledColors'] ?? json['colorSchoolBagsEnabledColors'],
+      defaultColors,
+    );
     final practice = (json['practiceMode'] as bool?) ??
         (json['colorSchoolBagsUnlimitedTime'] as bool?) ??
         true;
@@ -65,12 +71,12 @@ class ColorSchoolBagsSettings extends Equatable {
     );
   }
 
-  static List<String> _parseColors(Object? raw) {
+  static List<String> _parseColors(Object? raw, List<String> fallback) {
     if (raw is List) {
       final ids = raw.whereType<String>().toList();
       if (ids.length >= 2) return ids;
     }
-    return ColorSchoolBagsDefaults.enabled;
+    return fallback;
   }
 
   @override

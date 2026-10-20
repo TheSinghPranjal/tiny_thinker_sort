@@ -1,0 +1,161 @@
+{
+  "gameId": "animal_sort",
+  "playTitle": "Pet vs Wild",
+  "celebrationSubtitle": "You're a Friend to Every Animal!",
+  "categories": [
+    {
+      "id": "pet",
+      "label": "Pets",
+      "emoji": "🏠",
+      "color": 4294948685,
+      "zoneStyle": "house",
+      "caption": "Cosy house"
+    },
+    {
+      "id": "wild",
+      "label": "Wild",
+      "emoji": "🌴",
+      "color": 4284922730,
+      "zoneStyle": "jungle",
+      "caption": "Jungle"
+    }
+  ],
+  "items": [
+    {
+      "id": "dog",
+      "name": "Dog",
+      "emoji": "🐕",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/dog.png"
+    },
+    {
+      "id": "cat",
+      "name": "Cat",
+      "emoji": "🐈",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/cat.png"
+    },
+    {
+      "id": "rabbit",
+      "name": "Rabbit",
+      "emoji": "🐇",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/rabbit.png"
+    },
+    {
+      "id": "fish",
+      "name": "Goldfish",
+      "emoji": "🐟",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/fish.png"
+    },
+    {
+      "id": "parrot",
+      "name": "Parrot",
+      "emoji": "🦜",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/parrot.png"
+    },
+    {
+      "id": "hamster",
+      "name": "Hamster",
+      "emoji": "🐹",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/hamster.png"
+    },
+    {
+      "id": "turtle",
+      "name": "Turtle",
+      "emoji": "🐢",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/turtle.png"
+    },
+    {
+      "id": "guinea_pig",
+      "name": "Guinea Pig",
+      "emoji": "🐹",
+      "categoryId": "pet",
+      "imageAsset": "assets/items/pet_wild/guinea_pig.png"
+    },
+    {
+      "id": "lion",
+      "name": "Lion",
+      "emoji": "🦁",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/lion.png"
+    },
+    {
+      "id": "tiger",
+      "name": "Tiger",
+      "emoji": "🐅",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/tiger.png"
+    },
+    {
+      "id": "elephant",
+      "name": "Elephant",
+      "emoji": "🐘",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/elephant.png"
+    },
+    {
+      "id": "giraffe",
+      "name": "Giraffe",
+      "emoji": "🦒",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/giraffe.png"
+    },
+    {
+      "id": "zebra",
+      "name": "Zebra",
+      "emoji": "🦓",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/zebra.png"
+    },
+    {
+      "id": "monkey",
+      "name": "Monkey",
+      "emoji": "🐒",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/monkey.png"
+    },
+    {
+      "id": "bear",
+      "name": "Bear",
+      "emoji": "🐻",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/bear.png"
+    },
+    {
+      "id": "crocodile",
+      "name": "Crocodile",
+      "emoji": "🐊",
+      "categoryId": "wild",
+      "imageAsset": "assets/items/pet_wild/crocodile.png"
+    }
+  ],
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "pet",
+        "wild"
+      ]
+    },
+    {
+      "id": "petsOnly",
+      "label": "Pets only",
+      "categoryIds": [
+        "pet"
+      ]
+    },
+    {
+      "id": "wildOnly",
+      "label": "Wild only",
+      "categoryIds": [
+        "wild"
+      ]
+    }
+  ]
+}
