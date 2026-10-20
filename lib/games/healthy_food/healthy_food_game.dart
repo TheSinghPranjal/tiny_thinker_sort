@@ -8,13 +8,15 @@ import '../../presentation/providers/game_library.dart';
 import '../../state/app_state.dart';
 import '../../widgets/app_background.dart';
 
-Future<void> openHealthyFoodGame(BuildContext context) async {
+Future<void> openHealthyFoodGame(BuildContext context, {String? gameId}) async {
   final app = context.read<AppState>();
   final library = context.read<GameLibrary>();
   final s = app.gameSettings.healthyFood;
   final c = s.common;
-  final content = library.content(GameCatalog.healthyFoodId);
+  final id = gameId ?? GameCatalog.healthyFoodId;
+  final content = library.content(id);
   final itemPool = library.healthyItems(
+    gameId: id,
     enabledHealthyIds: s.enabledHealthyIds,
     enabledJunkIds: s.enabledJunkIds,
     difficultyId: s.difficulty.name,
@@ -22,7 +24,7 @@ Future<void> openHealthyFoodGame(BuildContext context) async {
   final itemSize = c.largerTouchTargets ? 150.0 : 132.0;
 
   final config = SortingEngineConfig(
-    gameId: GameCatalog.healthyFoodId,
+    gameId: id,
     categories: content.categories,
     itemPool: itemPool,
     sessionSeconds: c.sessionSeconds,

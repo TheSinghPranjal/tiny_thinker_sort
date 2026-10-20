@@ -10,7 +10,7 @@ import 'package:tiny_thinker_sort/games/sorting_engine/sorting_play_screen.dart'
 import 'package:tiny_thinker_sort/presentation/providers/game_library.dart';
 import 'package:tiny_thinker_sort/widgets/app_background.dart';
 
-/// Headless captures of the three picture-sorting games.
+/// Headless captures of the picture-sorting games.
 ///
 /// Regenerate with:
 /// `flutter test test/play_screen_screenshots_test.dart --update-goldens`
@@ -26,8 +26,10 @@ void main() {
   testWidgets('play screens draw item pictures inside the bubbles', (
     tester,
   ) async {
-    await tester.binding.setSurfaceSize(const Size(420, 860));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+    tester.view.physicalSize = const Size(420, 860);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
     await _capture(
       tester,
@@ -36,19 +38,26 @@ void main() {
       'indoor_outdoor_play',
       const ['puzzle', 'teddy', 'football', 'bicycle'],
     );
+    await _capture(tester, library, GameIds.bigSmall, 'big_small_play', const [
+      'elephant',
+      'ship',
+      'mouse',
+      'apple',
+    ]);
+    await _capture(tester, library, GameIds.animalSort, 'pet_wild_play', const [
+      'dog',
+      'cat',
+      'lion',
+      'giraffe',
+    ]);
     await _capture(
       tester,
       library,
-      GameIds.bigSmall,
-      'big_small_play',
-      const ['elephant', 'ship', 'mouse', 'apple'],
-    );
-    await _capture(
-      tester,
-      library,
-      GameIds.animalSort,
-      'pet_wild_play',
-      const ['dog', 'cat', 'lion', 'giraffe'],
+      GameIds.healthyTreats,
+      'healthy_food_play',
+      const ['apple', 'broccoli', 'burger', 'donut'],
+      foodBubble: true,
+      toddlerZones: true,
     );
   });
 }
@@ -58,8 +67,10 @@ Future<void> _capture(
   GameLibrary library,
   String gameId,
   String fileName,
-  List<String> itemIds,
-) async {
+  List<String> itemIds, {
+  bool foodBubble = false,
+  bool toddlerZones = false,
+}) async {
   final content = library.content(gameId);
   final pool = [for (final id in itemIds) content.itemById(id)!];
   final round = library.roundFor(gameId, 'mixed');
@@ -84,9 +95,11 @@ Future<void> _capture(
               speedMultiplier: 0,
               floatingAnimation: false,
               reducedMotion: true,
-              itemSize: 108,
+              itemSize: foodBubble ? 124 : 108,
               celebrationsEnabled: false,
               voiceEnabled: false,
+              foodBubbleShape: foodBubble,
+              toddlerZones: toddlerZones,
             ),
           ),
         ),
@@ -112,6 +125,10 @@ Future<void> _capture(
   );
 
   await tester.pumpWidget(const SizedBox.shrink());
+  if (toddlerZones) {
+    // Toddler zones schedule a blink after they leave the tree.
+    await tester.pump(const Duration(seconds: 6));
+  }
 }
 
 Finder _itemImages(List<SortableItem> pool) {

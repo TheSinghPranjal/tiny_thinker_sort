@@ -30,18 +30,15 @@ class GameLibrary {
     required String gameId,
     required List<String> enabledIds,
     required int count,
-  }) => _match(
-    content: content(gameId),
-    enabledIds: enabledIds,
-    count: count,
-  );
+  }) => _match(content: content(gameId), enabledIds: enabledIds, count: count);
 
   List<SortableItem> healthyItems({
     required List<String> enabledHealthyIds,
     required List<String> enabledJunkIds,
     required String difficultyId,
+    String gameId = healthyFoodGameId,
   }) => _healthy(
-    content: content(healthyFoodGameId),
+    content: content(gameId),
     enabledHealthyIds: enabledHealthyIds,
     enabledJunkIds: enabledJunkIds,
     difficultyId: difficultyId,

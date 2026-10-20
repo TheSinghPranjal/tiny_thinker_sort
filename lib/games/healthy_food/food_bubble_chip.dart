@@ -2,17 +2,23 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-/// Glossy white bubble containing a large food emoji for toddler drag targets.
+import '../../presentation/widgets/item_glyph.dart';
+
+/// Glossy white bubble containing a food picture for toddler drag targets.
+///
+/// The emoji is only shown when [imageAsset] is missing or fails to load.
 class FoodBubbleChip extends StatelessWidget {
   const FoodBubbleChip({
     super.key,
     required this.size,
     required this.emoji,
+    this.imageAsset,
     this.bobPhase = 0,
   });
 
   final double size;
   final String emoji;
+  final String? imageAsset;
   final double bobPhase;
 
   @override
@@ -55,21 +61,29 @@ class FoodBubbleChip extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Positioned(
-                top: size * 0.12,
-                left: size * 0.18,
-                child: Container(
-                  width: size * 0.22,
-                  height: size * 0.12,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(20),
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.all(size * 0.16),
+                  child: ItemGlyph(
+                    emoji: emoji,
+                    imageAsset: imageAsset,
+                    fontSize: size * 0.48,
                   ),
                 ),
               ),
-              Text(
-                emoji,
-                style: TextStyle(fontSize: size * 0.48),
+              Positioned(
+                top: size * 0.12,
+                left: size * 0.18,
+                child: IgnorePointer(
+                  child: Container(
+                    width: size * 0.22,
+                    height: size * 0.12,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.75),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

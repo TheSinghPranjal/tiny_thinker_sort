@@ -250,7 +250,8 @@ class GameSettingsStore extends ChangeNotifier {
       GameCatalog.colorSchoolBagsId => colorSchoolBags.common,
       GameCatalog.sortSocksId => sortSocks.common,
       GameCatalog.flowerGardenId => flowerGarden.common,
-      GameCatalog.healthyFoodId => healthyFood.common,
+      GameCatalog.healthyFoodId ||
+      GameCatalog.healthyTreatsId => healthyFood.common,
       GameCatalog.cleanDirtyId => cleanDirty.common,
       GameCatalog.animalSortId => petWild.common,
       _ => const CommonGameControls(),
@@ -277,6 +278,9 @@ class GameSettingsStore extends ChangeNotifier {
       case GameCatalog.flowerGardenId:
         await patchFlowerGarden((s) => s.patchCommon(fn));
       case GameCatalog.healthyFoodId:
+      case GameCatalog.healthyTreatsId:
+        // Both home cards share one settings document so a saved
+        // healthy_junk_food_sort pool still applies after the Treats rename.
         await patchHealthyFood((s) => s.patchCommon(fn));
       case GameCatalog.cleanDirtyId:
         await patchCleanDirty((s) => s.patchCommon(fn));

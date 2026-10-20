@@ -1,6 +1,6 @@
 {
   "gameId": "healthy_junk_food_sort",
-  "playTitle": "Learn to Sort",
+  "playTitle": "Healthy Food vs Treats",
   "categories": [
     {
       "id": "healthy",
@@ -11,7 +11,7 @@
     },
     {
       "id": "junk",
-      "label": "Junk Food",
+      "label": "Treats",
       "emoji": "🍔",
       "color": 4294930499,
       "zoneStyle": "basket"
@@ -22,186 +22,216 @@
       "id": "apple",
       "name": "Apple",
       "emoji": "🍎",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/apple.png"
     },
     {
       "id": "banana",
       "name": "Banana",
       "emoji": "🍌",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/banana.png"
     },
     {
       "id": "strawberry",
       "name": "Strawberry",
       "emoji": "🍓",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/strawberry.png"
     },
     {
       "id": "grapes",
       "name": "Grapes",
       "emoji": "🍇",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/grapes.png"
     },
     {
       "id": "carrot",
       "name": "Carrot",
       "emoji": "🥕",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/carrot.png"
     },
     {
       "id": "broccoli",
       "name": "Broccoli",
       "emoji": "🥦",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/broccoli.png"
     },
     {
       "id": "cucumber",
       "name": "Cucumber",
       "emoji": "🥒",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/cucumber.png"
     },
     {
       "id": "orange",
       "name": "Orange",
       "emoji": "🍊",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/orange.png"
     },
     {
       "id": "mango",
       "name": "Mango",
       "emoji": "🥭",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/mango.png"
     },
     {
       "id": "watermelon",
       "name": "Watermelon",
       "emoji": "🍉",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/watermelon.png"
     },
     {
       "id": "pineapple",
       "name": "Pineapple",
       "emoji": "🍍",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/pineapple.png"
     },
     {
       "id": "lettuce",
       "name": "Lettuce",
       "emoji": "🥬",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/lettuce.png"
     },
     {
       "id": "kiwi",
       "name": "Kiwi",
       "emoji": "🥝",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/kiwi.png"
     },
     {
       "id": "corn",
       "name": "Corn",
       "emoji": "🌽",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/corn.png"
     },
     {
       "id": "potato",
       "name": "Potato",
       "emoji": "🥔",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/potato.png"
     },
     {
       "id": "pear",
       "name": "Pear",
       "emoji": "🍐",
-      "categoryId": "healthy"
+      "categoryId": "healthy",
+      "imageAsset": "assets/items/healthy_food/pear.png"
     },
     {
       "id": "burger",
       "name": "Burger",
       "emoji": "🍔",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/burger.png"
     },
     {
       "id": "pizza",
       "name": "Pizza",
       "emoji": "🍕",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/pizza.png"
     },
     {
       "id": "fries",
       "name": "French Fries",
       "emoji": "🍟",
       "categoryId": "junk",
-      "voiceName": "Fries"
+      "voiceName": "Fries",
+      "imageAsset": "assets/items/healthy_food/fries.png"
     },
     {
       "id": "hot_dog",
       "name": "Hot Dog",
       "emoji": "🌭",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/hot_dog.png"
     },
     {
       "id": "donut",
       "name": "Donut",
       "emoji": "🍩",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/donut.png"
     },
     {
       "id": "cookie",
       "name": "Cookie",
       "emoji": "🍪",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/cookie.png"
     },
     {
       "id": "chocolate",
       "name": "Chocolate",
       "emoji": "🍫",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/chocolate.png"
     },
     {
       "id": "cake",
       "name": "Cake",
       "emoji": "🍰",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/cake.png"
     },
     {
       "id": "noodles",
       "name": "Instant Noodles",
       "emoji": "🍜",
       "categoryId": "junk",
-      "voiceName": "Noodles"
+      "voiceName": "Noodles",
+      "imageAsset": "assets/items/healthy_food/noodles.png"
     },
     {
       "id": "soda",
       "name": "Soda",
       "emoji": "🥤",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/soda.png"
     },
     {
       "id": "candy",
       "name": "Candy",
       "emoji": "🍭",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/candy.png"
     },
     {
       "id": "cupcake",
       "name": "Cupcake",
       "emoji": "🧁",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/cupcake.png"
     },
     {
       "id": "lollipop",
       "name": "Lollipop",
       "emoji": "🍬",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/lollipop.png"
     },
     {
       "id": "popcorn",
       "name": "Popcorn",
       "emoji": "🍿",
-      "categoryId": "junk"
+      "categoryId": "junk",
+      "imageAsset": "assets/items/healthy_food/popcorn.png"
     }
   ],
-  "celebrationSubtitle": "You know healthy and junk food!",
+  "celebrationSubtitle": "You know healthy food and treats!",
   "difficulties": [
     {
       "id": "beginner",
@@ -292,11 +322,11 @@
   "feedback": {
     "correctLabels": {
       "healthy": "HEALTHY!",
-      "junk": "JUNK FOOD"
+      "junk": "TREATS!"
     },
     "voiceLabels": {
       "healthy": "Healthy Food!",
-      "junk": "Junk Food!"
+      "junk": "Treats!"
     }
   }
 }

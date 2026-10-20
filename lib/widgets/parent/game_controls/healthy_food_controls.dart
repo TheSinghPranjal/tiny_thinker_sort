@@ -19,7 +19,9 @@ class HealthyFoodControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = context.read<GameLibrary>().content(GameCatalog.healthyFoodId);
+    final content = context.read<GameLibrary>().content(
+      GameCatalog.healthyFoodId,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -65,7 +67,7 @@ class HealthyFoodControls extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         const Text(
-          'Junk foods (at least 4)',
+          'Treats (at least 4)',
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
         Wrap(
