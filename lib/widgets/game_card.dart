@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'clay_surface.dart';
-
-/// Claymorphism game card — pastel clay body tinted per game, recessed art
-/// well, clay badge and a puffy play button.
+/// Game card — frosted pastel body tinted per game with a white rim, framed
+/// art, glossy badge and a glossy play button.
 class GameCard extends StatelessWidget {
   const GameCard({
     super.key,
@@ -31,89 +29,175 @@ class GameCard extends StatelessWidget {
   final bool playable;
   final bool pressed;
 
-  static const _subtitleColor = Color(0xFF4A5560);
+  static const _subtitleColor = Color(0xFF5B6573);
 
   @override
   Widget build(BuildContext context) {
-    final clay = Color.lerp(badgeColor, Colors.white, 0.8)!;
+    final lift = pressed ? 0.4 : 1.0;
+    final shadow = Color.lerp(badgeColor, const Color(0xFF2A3550), 0.55)!;
 
-    return ClaySurface(
-      color: clay,
-      radius: 30,
-      pressed: pressed,
-      padding: const EdgeInsets.fromLTRB(9, 9, 9, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: ClayWell(
-                    radius: 22,
-                    color: Color.lerp(badgeColor, Colors.white, 0.85)!,
-                    child: _CardImage(
-                      image: image,
-                      tint: badgeColor,
-                      placeholderEmoji: placeholderEmoji,
-                      dimmed: !playable,
-                    ),
-                  ),
-                ),
-                if (badge.isNotEmpty)
-                  Positioned(
-                    top: 9,
-                    right: 9,
-                    child: _Badge(text: badge, color: badgeColor),
-                  ),
-              ],
-            ),
+    // Frosted pastel card with a thick white rim, like the home mockup.
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 140),
+      curve: Curves.easeOut,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(badgeColor, Colors.white, 0.9)!,
+            Color.lerp(badgeColor, Colors.white, 0.8)!,
+          ],
+        ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.92),
+          width: 3.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: shadow.withValues(alpha: 0.26),
+            blurRadius: 20 * lift,
+            spreadRadius: -2,
+            offset: Offset(0, 10 * lift),
           ),
-          const SizedBox(height: 7),
-          // Title gets the full width so two-word names never truncate;
-          // the play button sits beside the subtitle.
-          Padding(
-            padding: const EdgeInsets.only(left: 5),
-            child: Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.baloo2(
-                fontSize: 16.5,
-                height: 1.05,
-                fontWeight: FontWeight.w800,
-                color: titleColor,
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Text(
-                    subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.baloo2(
-                      fontSize: 12.5,
-                      height: 1.15,
-                      fontWeight: FontWeight.w600,
-                      color: _subtitleColor,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              playable
-                  ? _PlayButton(color: badgeColor, pressed: pressed)
-                  : const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: _DecorIcon(),
-                    ),
-            ],
+          BoxShadow(
+            color: shadow.withValues(alpha: 0.12),
+            blurRadius: 4 * lift,
+            offset: Offset(0, 2 * lift),
           ),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: _ArtFrame(
+                      tint: badgeColor,
+                      child: _CardImage(
+                        image: image,
+                        tint: badgeColor,
+                        placeholderEmoji: placeholderEmoji,
+                        dimmed: !playable,
+                      ),
+                    ),
+                  ),
+                  if (badge.isNotEmpty)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: _Badge(text: badge, color: badgeColor),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Title gets the full width so two-word names never truncate;
+            // the play button sits beside the subtitle.
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.baloo2(
+                  fontSize: 18,
+                  height: 1.0,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
+                  color: titleColor,
+                  shadows: const [
+                    Shadow(color: Colors.white, offset: Offset(0, 1)),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.baloo2(
+                        fontSize: 13,
+                        height: 1.12,
+                        fontWeight: FontWeight.w600,
+                        color: _subtitleColor,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                playable
+                    ? _PlayButton(color: badgeColor, pressed: pressed)
+                    : const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: _DecorIcon(),
+                      ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Rounded art window with a soft white frame and gentle inner vignette.
+class _ArtFrame extends StatelessWidget {
+  const _ArtFrame({required this.tint, required this.child});
+
+  final Color tint;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        color: Color.lerp(tint, Colors.white, 0.85),
+        boxShadow: [
+          BoxShadow(
+            color: tint.withValues(alpha: 0.18),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            child,
+            IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.18),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.06),
+                    ],
+                    stops: const [0.0, 0.18, 0.8, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -202,7 +286,7 @@ class _CardImage extends StatelessWidget {
   }
 }
 
-/// Puffy clay play button — bottom-right of the text block.
+/// Glossy gradient play button with a white rim — bottom-right of the card.
 class _PlayButton extends StatelessWidget {
   const _PlayButton({required this.color, required this.pressed});
 
@@ -211,17 +295,67 @@ class _PlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 42,
-      height: 42,
-      child: ClaySurface(
-        color: color,
-        radius: 21,
-        depth: 0.5,
-        pressed: pressed,
-        child: const Center(
-          child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 30),
+    final light = Color.lerp(color, Colors.white, 0.3)!;
+    final dark = Color.lerp(color, Colors.black, 0.12)!;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 140),
+      width: 46,
+      height: 46,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [light, dark],
         ),
+        border: Border.all(color: Colors.white, width: 2.5),
+        boxShadow: [
+          BoxShadow(
+            color: dark.withValues(alpha: 0.4),
+            blurRadius: pressed ? 3 : 8,
+            offset: Offset(0, pressed ? 1 : 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Glossy top highlight.
+          Positioned(
+            top: 3,
+            left: 8,
+            right: 8,
+            height: 15,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.55),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 2),
+            child: Icon(
+              Icons.play_arrow_rounded,
+              color: Colors.white,
+              size: 32,
+              shadows: [
+                Shadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -281,7 +415,7 @@ class _FlowerPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Clay pill badge ("3 left", "Soon").
+/// Glossy pill badge ("3 left", "Soon").
 class _Badge extends StatelessWidget {
   const _Badge({required this.text, required this.color});
 
@@ -290,21 +424,40 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClaySurface(
-      color: color,
-      radius: 999,
-      depth: 0.35,
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(color, Colors.white, 0.22)!,
+            Color.lerp(color, Colors.black, 0.06)!,
+          ],
+        ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.85),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.35),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Text(
         text,
         style: GoogleFonts.baloo2(
           color: Colors.white,
           fontWeight: FontWeight.w800,
-          fontSize: 13.5,
+          fontSize: 14,
           height: 1.2,
           shadows: [
             Shadow(
-              color: Colors.black.withValues(alpha: 0.18),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -315,7 +468,7 @@ class _Badge extends StatelessWidget {
   }
 }
 
-/// Clay squish press feedback + navigation wrapper for [GameCard].
+/// Squish press feedback + navigation wrapper for [GameCard].
 class PressableGameCard extends StatefulWidget {
   const PressableGameCard({
     super.key,
