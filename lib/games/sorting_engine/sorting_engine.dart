@@ -45,6 +45,8 @@ class SortingEngineConfig {
     this.categoryEmoji,
     this.hideCoinHud = false,
     this.foodBubbleShape = false,
+    this.soapBubbleShape = false,
+    this.wickerBasketZones = false,
     this.toddlerZones = false,
     this.laundryZones = false,
     this.clothesChipShape = false,
@@ -124,6 +126,12 @@ class SortingEngineConfig {
   /// White glossy bubble chips (Healthy Food game).
   final bool foodBubbleShape;
 
+  /// See-through soap bubble chips (Fruit & Vegetable Sort).
+  final bool soapBubbleShape;
+
+  /// Woven wicker baskets with cloth liners instead of flat drop cards.
+  final bool wickerBasketZones;
+
   /// Toddler character drop zones instead of baskets.
   final bool toddlerZones;
 
@@ -192,11 +200,8 @@ typedef SortingListener = void Function();
 
 /// Shared session loop: float → drag → guide/celebrate → rewards → timer.
 class SortingEngine {
-  SortingEngine({
-    required this.config,
-    required this.onChanged,
-    Random? random,
-  }) : _random = random ?? Random();
+  SortingEngine({required this.config, required this.onChanged, Random? random})
+    : _random = random ?? Random();
 
   final SortingEngineConfig config;
   final SortingListener onChanged;
@@ -213,6 +218,10 @@ class SortingEngine {
   int longestStreak = 0;
   bool paused = false;
   bool finished = false;
+
+  /// Set once the first layout has seeded the field; resizes after that
+  /// must not restart (and wipe) the session.
+  bool started = false;
   String? toastMessage;
   String? voiceLabel;
   String? guidanceCategoryId;
@@ -228,6 +237,9 @@ class SortingEngine {
   DateTime? _reactionUntil;
   DateTime? _nextRespawnAt;
   Size playSize = Size.zero;
+
+  /// Highest y an item may float to — below the notch and HUD.
+  double topInset = 60;
 
   static const defaultEncouragements = [
     'Fantastic!',
@@ -245,6 +257,7 @@ class SortingEngine {
       config.encouragements ?? defaultEncouragements;
 
   void start(Size size) {
+    started = true;
     playSize = size;
     remainingSeconds = config.sessionSeconds;
     _preciseRemaining = config.sessionSeconds.toDouble();
@@ -280,6 +293,13 @@ class SortingEngine {
     playSize = size;
   }
 
+  /// App went to the background — pause so the timer can't run out unseen.
+  void pauseForBackground() {
+    if (finished || paused) return;
+    paused = true;
+    onChanged();
+  }
+
   void togglePause() {
     if (finished) return;
     paused = !paused;
@@ -302,19 +322,26 @@ class SortingEngine {
     if (finished || paused || playSize == Size.zero) return;
     final now = DateTime.now();
     final last = _lastTick ?? now;
-    final dt = (now.difference(last).inMilliseconds / 1000.0).clamp(0.0, 0.05);
+    // Real wall-clock time drives the session timer so slow frames don't
+    // stretch it; gaps over a second mean the app was suspended and are
+    // skipped. Physics uses a small clamped step to stay stable.
+    final elapsed = now.difference(last).inMicroseconds / 1e6;
+    final timerDt = elapsed > 1.0 ? 0.0 : elapsed;
+    final dt = elapsed.clamp(0.0, 0.05);
     _lastTick = now;
 
     if (!config.unlimitedSession) {
-      _preciseRemaining -= dt;
+      _preciseRemaining -= timerDt;
       if (_preciseRemaining <= 0) {
         remainingSeconds = 0;
         finished = true;
         onChanged();
         return;
       }
-      remainingSeconds =
-          _preciseRemaining.ceil().clamp(0, config.sessionSeconds);
+      remainingSeconds = _preciseRemaining.ceil().clamp(
+        0,
+        config.sessionSeconds,
+      );
     } else {
       remainingSeconds = 0;
     }
@@ -326,19 +353,22 @@ class SortingEngine {
       if (item.dragging) continue;
       item.bobPhase += dt * 2.2 * (bobEnabled ? 1.0 : 0.0);
       final bob = bobEnabled ? sin(item.bobPhase) * 10 : 0.0;
-      var next = item.position +
+      var next =
+          item.position +
           item.velocity * dt * config.speedMultiplier * motionScale;
       next = Offset(next.dx, next.dy + bob * dt * 8);
 
       // Soft wrap / bounce inside play area (above baskets)
       final maxY = playSize.height * 0.55;
-      if (next.dx < 20 || next.dx > playSize.width - 80) {
+      final maxX = _maxX(item.item);
+      if (next.dx < 20 || next.dx > maxX) {
         item.velocity = Offset(-item.velocity.dx, item.velocity.dy);
-        next = Offset(next.dx.clamp(20, playSize.width - 80), next.dy);
+        next = Offset(next.dx.clamp(20, maxX), next.dy);
       }
-      if (next.dy < 60 || next.dy > maxY) {
+      final minY = topInset;
+      if (next.dy < minY || next.dy > maxY) {
         item.velocity = Offset(item.velocity.dx, -item.velocity.dy);
-        next = Offset(next.dx, next.dy.clamp(60, maxY));
+        next = Offset(next.dx, next.dy.clamp(minY, max(minY, maxY)));
       }
       item.position = next;
     }
@@ -423,8 +453,9 @@ class SortingEngine {
       _accept(floating, categoryId);
       items.removeAt(idx);
       if (config.respawnDelayMs > 0) {
-        _nextRespawnAt =
-            DateTime.now().add(Duration(milliseconds: config.respawnDelayMs));
+        _nextRespawnAt = DateTime.now().add(
+          Duration(milliseconds: config.respawnDelayMs),
+        );
       } else {
         _spawnItem();
       }
@@ -432,8 +463,10 @@ class SortingEngine {
       return true;
     }
 
-    // Gentle guidance — no penalty
+    // Gentle guidance — no penalty (rewards are kept; only the run of
+    // back-to-back correct sorts restarts).
     floating.missCount += 1;
+    currentStreak = 0;
     guidanceCategoryId = floating.item.categoryId;
     wrongDropCategoryId = categoryId;
     _guidanceUntil = DateTime.now().add(const Duration(seconds: 2));
@@ -441,7 +474,10 @@ class SortingEngine {
     // Ease back slightly
     floating.position = Offset(
       floating.position.dx,
-      (floating.position.dy - 40).clamp(60, playSize.height * 0.5),
+      (floating.position.dy - 40).clamp(
+        topInset,
+        max(topInset, playSize.height * 0.5),
+      ),
     );
     final gentle = config.wrongDropMessage;
     if (gentle != null) {
@@ -470,14 +506,16 @@ class SortingEngine {
     currentStreak += 1;
     if (currentStreak > longestStreak) longestStreak = currentStreak;
     if (config.coinRewardsEnabled) {
-      final base =
-          config.coinsPerCorrectSort > 0 ? config.coinsPerCorrectSort : 3;
+      final base = config.coinsPerCorrectSort > 0
+          ? config.coinsPerCorrectSort
+          : 3;
       coins += (base * config.rewardMultiplier).round();
     }
     if (config.starsPerCorrectSort > 0) {
       stars += (config.starsPerCorrectSort * config.rewardMultiplier).round();
-    } else if (correctSorts % 3 == 0) {
-      stars += 1;
+    } else {
+      // One star per three sorts, scaled by the parent reward multiplier.
+      stars = (correctSorts * config.rewardMultiplier / 3).floor();
     }
     categoryCounts[categoryId] = (categoryCounts[categoryId] ?? 0) + 1;
 
@@ -520,14 +558,31 @@ class SortingEngine {
         .toLowerCase();
   }
 
+  /// Rightmost x that keeps the whole (visually scaled) chip on screen.
+  double _maxX(SortableItem item) {
+    final scale = item.visualScale.clamp(0.7, 1.35);
+    final visualRight = config.itemSize * (1 + scale) / 2;
+    return max(20.0, playSize.width - visualRight - 12);
+  }
+
+  bool _overlapsAny(Offset p) =>
+      items.any((e) => (e.position - p).distance < config.itemSize * 0.95);
+
   void _spawnItem({bool initial = false}) {
     if (config.itemPool.isEmpty || playSize == Size.zero) return;
     final item = config.itemPool[_random.nextInt(config.itemPool.length)];
     final fromLeft = _random.nextBool();
-    final y = 80.0 + _random.nextDouble() * (playSize.height * 0.35);
-    final x = initial
-        ? 40 + _random.nextDouble() * (playSize.width - 120)
+    var y = topInset + 12 + _random.nextDouble() * (playSize.height * 0.35);
+    var x = initial
+        ? 20 + _random.nextDouble() * (_maxX(item) - 20)
         : (fromLeft ? -40.0 : playSize.width + 10);
+    if (initial) {
+      // Spread the opening layout so large chips don't start stacked.
+      for (var tries = 0; tries < 16 && _overlapsAny(Offset(x, y)); tries++) {
+        x = 20 + _random.nextDouble() * (_maxX(item) - 20);
+        y = topInset + 12 + _random.nextDouble() * (playSize.height * 0.35);
+      }
+    }
     final speed = 28 + _random.nextDouble() * 40;
     final vx = fromLeft ? speed : -speed;
     final vy = (_random.nextDouble() - 0.5) * 20;
@@ -543,20 +598,20 @@ class SortingEngine {
   }
 
   SortingEngineSnapshot snapshot() => SortingEngineSnapshot(
-        remainingSeconds: remainingSeconds,
-        coins: coins,
-        stars: stars,
-        correctSorts: correctSorts,
-        currentStreak: currentStreak,
-        longestStreak: longestStreak,
-        categoryCounts: Map.unmodifiable(categoryCounts),
-        toastMessage: toastMessage,
-        voiceLabel: voiceLabel,
-        paused: paused,
-        finished: finished,
-        guidanceCategoryId: guidanceCategoryId,
-        idleHint: idleHint,
-        wrongDropCategoryId: wrongDropCategoryId,
-        happyDropCategoryId: happyDropCategoryId,
-      );
+    remainingSeconds: remainingSeconds,
+    coins: coins,
+    stars: stars,
+    correctSorts: correctSorts,
+    currentStreak: currentStreak,
+    longestStreak: longestStreak,
+    categoryCounts: Map.unmodifiable(categoryCounts),
+    toastMessage: toastMessage,
+    voiceLabel: voiceLabel,
+    paused: paused,
+    finished: finished,
+    guidanceCategoryId: guidanceCategoryId,
+    idleHint: idleHint,
+    wrongDropCategoryId: wrongDropCategoryId,
+    happyDropCategoryId: happyDropCategoryId,
+  );
 }

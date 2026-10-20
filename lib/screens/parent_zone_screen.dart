@@ -716,7 +716,7 @@ class _ChildStatsCard extends StatelessWidget {
               _StatPill(label: 'XP', value: '${r.xp}', emoji: '✨'),
               _StatPill(
                 label: 'Games today',
-                value: '${r.playsToday.values.fold<int>(0, (a, b) => a + b)}',
+                value: '${app.totalPlaysToday}',
                 emoji: '🎮',
               ),
               _StatPill(

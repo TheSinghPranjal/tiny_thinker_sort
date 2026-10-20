@@ -10,11 +10,11 @@ abstract final class GameCardAssets {
   static String imageFor(String gameId) => 'assets/games/$gameId.png';
 
   static Color titleColorFor(String gameId) => switch (gameId) {
-        'fruit_veg_sort' || 'healthy_junk_food_sort' => const Color(0xFF2F8C2F),
-        'indoor_outdoor_sort' => const Color(0xFF254A9A),
+        'fruit_veg_sort' || 'healthy_junk_food_sort' => const Color(0xFF1E6B1E),
+        'indoor_outdoor_sort' => const Color(0xFF1B3A7A),
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
-          const Color(0xFF6A4CFF),
-        'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF0288D1),
+          const Color(0xFF2E2160),
+        'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF16324F),
         'flower_garden' => const Color(0xFFD81B60),
         'clean_dirty_sort' => const Color(0xFF0277BD),
         _ => const Color(0xFF254A9A),
@@ -22,10 +22,10 @@ abstract final class GameCardAssets {
 
   static Color badgeColorFor(String gameId) => switch (gameId) {
         'fruit_veg_sort' || 'healthy_junk_food_sort' => SortJoyColors.grassDark,
-        'indoor_outdoor_sort' => const Color(0xFF4F9EFF),
+        'indoor_outdoor_sort' => const Color(0xFF3B8BF5),
         'color_sort' || 'color_school_bags' || 'sort_socks' =>
-          SortJoyColors.lavender,
-        'big_small_sort_tiny' || 'big_small_sort' => SortJoyColors.mint,
+          const Color(0xFF9B6BFA),
+        'big_small_sort_tiny' || 'big_small_sort' => const Color(0xFF26B5A8),
         'flower_garden' => SortJoyColors.berry,
         'clean_dirty_sort' => const Color(0xFF4FC3F7),
         _ => const Color(0xFF4F9EFF),
