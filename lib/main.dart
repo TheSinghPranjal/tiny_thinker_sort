@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'data/repositories/asset_game_content_repository.dart';
+import 'presentation/providers/game_library.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'state/app_state.dart';
@@ -14,20 +16,25 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  final library = GameLibrary(await AssetGameContentRepository.load());
   final appState = AppState();
-  await appState.load();
-  runApp(SortJoyApp(appState: appState));
+  await appState.load(library: library);
+  runApp(SortJoyApp(appState: appState, library: library));
 }
 
 class SortJoyApp extends StatelessWidget {
-  const SortJoyApp({super.key, required this.appState});
+  const SortJoyApp({super.key, required this.appState, required this.library});
 
   final AppState appState;
+  final GameLibrary library;
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: appState,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: appState),
+        Provider<GameLibrary>.value(value: library),
+      ],
       child: MaterialApp(
         title: 'SortJoy',
         debugShowCheckedModeBanner: false,

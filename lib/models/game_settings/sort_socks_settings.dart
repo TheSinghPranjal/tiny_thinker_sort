@@ -7,7 +7,7 @@ class SortSocksSettings extends Equatable {
   const SortSocksSettings({
     this.common = const CommonGameControls(practiceMode: true),
     this.difficulty = SortSocksDifficulty.level2,
-    this.enabledColors = SortSocksDefaults.enabled,
+    this.enabledColors = const [],
   });
 
   final CommonGameControls common;
@@ -41,9 +41,14 @@ class SortSocksSettings extends Equatable {
         'enabledColors': enabledColors,
       };
 
-  factory SortSocksSettings.fromJson(Map<String, dynamic> json) {
-    final colors =
-        _parseColors(json['enabledColors'] ?? json['sortSocksEnabledColors']);
+  factory SortSocksSettings.fromJson(
+    Map<String, dynamic> json, {
+    List<String> defaultColors = const [],
+  }) {
+    final colors = _parseColors(
+      json['enabledColors'] ?? json['sortSocksEnabledColors'],
+      defaultColors,
+    );
     final practice = (json['practiceMode'] as bool?) ??
         (json['sortSocksUnlimitedTime'] as bool?) ??
         true;
@@ -64,12 +69,12 @@ class SortSocksSettings extends Equatable {
     );
   }
 
-  static List<String> _parseColors(Object? raw) {
+  static List<String> _parseColors(Object? raw, List<String> fallback) {
     if (raw is List) {
       final ids = raw.whereType<String>().toList();
       if (ids.length >= 2) return ids;
     }
-    return SortSocksDefaults.enabled;
+    return fallback;
   }
 
   @override

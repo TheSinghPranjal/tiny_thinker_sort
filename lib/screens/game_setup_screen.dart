@@ -13,6 +13,7 @@ import '../games/healthy_food/healthy_food_game.dart';
 import '../games/color_sort/color_sort_game.dart';
 import '../games/fruit_veg/fruit_veg_game.dart';
 import '../games/indoor_outdoor/indoor_outdoor_game.dart';
+import '../games/pet_wild/pet_wild_game.dart';
 import '../games/sort_socks/sort_socks_game.dart';
 import '../models/game_definition.dart';
 import '../models/game_duration.dart';
@@ -129,6 +130,8 @@ class GameSetupScreen extends StatelessWidget {
       await openHealthyFoodGame(context);
     } else if (game.id == GameCatalog.cleanDirtyId) {
       await openCleanDirtyGame(context);
+    } else if (game.id == GameCatalog.animalSortId) {
+      await openPetWildGame(context);
     }
   }
 }

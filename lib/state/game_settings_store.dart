@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/game_catalog.dart';
 import '../models/game_duration.dart';
 import '../models/game_settings/game_settings.dart';
+import '../presentation/providers/game_library.dart';
 
 /// Persists per-game parent controls under `{game_id}_settings`.
 ///
@@ -21,12 +22,16 @@ class GameSettingsStore extends ChangeNotifier {
   FlowerGardenSettings flowerGarden = const FlowerGardenSettings();
   HealthyFoodSettings healthyFood = const HealthyFoodSettings();
   CleanDirtySettings cleanDirty = const CleanDirtySettings();
+  PetWildSettings petWild = const PetWildSettings();
 
   bool ready = false;
 
   static String prefsKey(String gameId) => '${gameId}_settings';
 
-  Future<void> load({Map<String, dynamic>? legacySettings}) async {
+  Future<void> load({
+    Map<String, dynamic>? legacySettings,
+    GameLibrary? library,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
 
     fruitVeg = _loadOrMigrate(
@@ -53,35 +58,60 @@ class GameSettingsStore extends ChangeNotifier {
       BigSmallSettings.fromJson,
       () => _migrateBigSmall(legacySettings),
     );
+    final bagDefaults = _defaultIds(library, GameCatalog.colorSchoolBagsId);
     colorSchoolBags = _loadOrMigrate(
       prefs,
       GameCatalog.colorSchoolBagsId,
-      ColorSchoolBagsSettings.fromJson,
-      () => _migrateColorSchoolBags(legacySettings),
+      (json) => ColorSchoolBagsSettings.fromJson(
+        json,
+        defaultColors: bagDefaults,
+      ),
+      () => _migrateColorSchoolBags(legacySettings, bagDefaults),
     );
+    final sockDefaults = _defaultIds(library, GameCatalog.sortSocksId);
     sortSocks = _loadOrMigrate(
       prefs,
       GameCatalog.sortSocksId,
-      SortSocksSettings.fromJson,
-      () => _migrateSortSocks(legacySettings),
+      (json) =>
+          SortSocksSettings.fromJson(json, defaultColors: sockDefaults),
+      () => _migrateSortSocks(legacySettings, sockDefaults),
     );
+    final flowerDefaults = _defaultIds(library, GameCatalog.flowerGardenId);
     flowerGarden = _loadOrMigrate(
       prefs,
       GameCatalog.flowerGardenId,
-      FlowerGardenSettings.fromJson,
-      () => _migrateFlowerGarden(legacySettings),
+      (json) => FlowerGardenSettings.fromJson(
+        json,
+        defaultColors: flowerDefaults,
+      ),
+      () => _migrateFlowerGarden(legacySettings, flowerDefaults),
     );
+    final healthyDefaults = _healthyDefaults(library);
     healthyFood = _loadOrMigrate(
       prefs,
       GameCatalog.healthyFoodId,
-      HealthyFoodSettings.fromJson,
-      () => _migrateHealthyFood(legacySettings),
+      (json) => HealthyFoodSettings.fromJson(
+        json,
+        defaultHealthyIds: healthyDefaults.$1,
+        defaultJunkIds: healthyDefaults.$2,
+      ),
+      () => _migrateHealthyFood(
+        legacySettings,
+        healthyDefaults.$1,
+        healthyDefaults.$2,
+      ),
     );
     cleanDirty = _loadOrMigrate(
       prefs,
       GameCatalog.cleanDirtyId,
       CleanDirtySettings.fromJson,
       () => const CleanDirtySettings(),
+    );
+    petWild = _loadOrMigrate(
+      prefs,
+      GameCatalog.animalSortId,
+      PetWildSettings.fromJson,
+      () => const PetWildSettings(),
     );
 
     ready = true;
@@ -179,6 +209,28 @@ class GameSettingsStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> patchPetWild(PetWildSettings Function(PetWildSettings) fn) async {
+    petWild = fn(petWild);
+    await _saveJson(GameCatalog.animalSortId, petWild.toJson());
+    notifyListeners();
+  }
+
+  List<String> _defaultIds(GameLibrary? library, String gameId) {
+    if (library == null || !library.repository.hasContent(gameId)) {
+      return const [];
+    }
+    return library.content(gameId).pools.defaultEnabledIds;
+  }
+
+  (List<String>, List<String>) _healthyDefaults(GameLibrary? library) {
+    if (library == null ||
+        !library.repository.hasContent(GameCatalog.healthyFoodId)) {
+      return (const [], const []);
+    }
+    final pools = library.content(GameCatalog.healthyFoodId).pools;
+    return (pools.defaultEnabledHealthyIds, pools.defaultEnabledJunkIds);
+  }
+
   /// Central read for session duration by game id.
   int sessionSecondsFor(String gameId) {
     return commonFor(gameId).sessionSeconds;
@@ -200,6 +252,7 @@ class GameSettingsStore extends ChangeNotifier {
       GameCatalog.flowerGardenId => flowerGarden.common,
       GameCatalog.healthyFoodId => healthyFood.common,
       GameCatalog.cleanDirtyId => cleanDirty.common,
+      GameCatalog.animalSortId => petWild.common,
       _ => const CommonGameControls(),
     };
   }
@@ -227,6 +280,8 @@ class GameSettingsStore extends ChangeNotifier {
         await patchHealthyFood((s) => s.patchCommon(fn));
       case GameCatalog.cleanDirtyId:
         await patchCleanDirty((s) => s.patchCommon(fn));
+      case GameCatalog.animalSortId:
+        await patchPetWild((s) => s.patchCommon(fn));
     }
   }
 
@@ -271,35 +326,58 @@ class GameSettingsStore extends ChangeNotifier {
     });
   }
 
-  ColorSchoolBagsSettings _migrateColorSchoolBags(Map<String, dynamic>? j) {
-    if (j == null) return const ColorSchoolBagsSettings();
+  ColorSchoolBagsSettings _migrateColorSchoolBags(
+    Map<String, dynamic>? j,
+    List<String> defaultColors,
+  ) {
+    if (j == null) {
+      return ColorSchoolBagsSettings(enabledColors: defaultColors);
+    }
     return ColorSchoolBagsSettings.fromJson({
       ...j,
       'narrationEnabled': j['voiceEnabled'],
-    });
+    }, defaultColors: defaultColors);
   }
 
-  SortSocksSettings _migrateSortSocks(Map<String, dynamic>? j) {
-    if (j == null) return const SortSocksSettings();
+  SortSocksSettings _migrateSortSocks(
+    Map<String, dynamic>? j,
+    List<String> defaultColors,
+  ) {
+    if (j == null) return SortSocksSettings(enabledColors: defaultColors);
     return SortSocksSettings.fromJson({
       ...j,
       'narrationEnabled': j['voiceEnabled'],
-    });
+    }, defaultColors: defaultColors);
   }
 
-  FlowerGardenSettings _migrateFlowerGarden(Map<String, dynamic>? j) {
-    if (j == null) return const FlowerGardenSettings();
+  FlowerGardenSettings _migrateFlowerGarden(
+    Map<String, dynamic>? j,
+    List<String> defaultColors,
+  ) {
+    if (j == null) {
+      return FlowerGardenSettings(enabledColors: defaultColors);
+    }
     return FlowerGardenSettings.fromJson({
       ...j,
       'narrationEnabled': j['voiceEnabled'],
-    });
+    }, defaultColors: defaultColors);
   }
 
-  HealthyFoodSettings _migrateHealthyFood(Map<String, dynamic>? j) {
-    if (j == null) return const HealthyFoodSettings();
-    return HealthyFoodSettings.fromJson({
-      ...j,
-      'narrationEnabled': j['voiceEnabled'],
-    });
+  HealthyFoodSettings _migrateHealthyFood(
+    Map<String, dynamic>? j,
+    List<String> defaultHealthyIds,
+    List<String> defaultJunkIds,
+  ) {
+    if (j == null) {
+      return HealthyFoodSettings(
+        enabledHealthyIds: defaultHealthyIds,
+        enabledJunkIds: defaultJunkIds,
+      );
+    }
+    return HealthyFoodSettings.fromJson(
+      {...j, 'narrationEnabled': j['voiceEnabled']},
+      defaultHealthyIds: defaultHealthyIds,
+      defaultJunkIds: defaultJunkIds,
+    );
   }
 }

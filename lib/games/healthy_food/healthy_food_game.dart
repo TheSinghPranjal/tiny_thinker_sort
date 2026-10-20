@@ -2,34 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/game_catalog.dart';
-import '../../data/healthy_food_data.dart';
-import '../../widgets/app_background.dart';
 import '../../games/sorting_engine/sorting_engine.dart';
 import '../../games/sorting_engine/sorting_play_screen.dart';
+import '../../presentation/providers/game_library.dart';
 import '../../state/app_state.dart';
+import '../../widgets/app_background.dart';
 
 Future<void> openHealthyFoodGame(BuildContext context) async {
   final app = context.read<AppState>();
+  final library = context.read<GameLibrary>();
   final s = app.gameSettings.healthyFood;
   final c = s.common;
-
-  final itemPool = HealthyFoodData.itemsForSettings(
+  final content = library.content(GameCatalog.healthyFoodId);
+  final itemPool = library.healthyItems(
     enabledHealthyIds: s.enabledHealthyIds,
     enabledJunkIds: s.enabledJunkIds,
-    difficulty: s.difficulty,
+    difficultyId: s.difficulty.name,
   );
   final itemSize = c.largerTouchTargets ? 150.0 : 132.0;
 
   final config = SortingEngineConfig(
     gameId: GameCatalog.healthyFoodId,
-    categories: HealthyFoodData.categories,
+    categories: content.categories,
     itemPool: itemPool,
     sessionSeconds: c.sessionSeconds,
     maxFloating: 1,
     speedMultiplier: 0.55,
     voiceEnabled: c.narrationEnabled,
     celebrationsEnabled: c.celebrationsEnabled,
-    celebrationSubtitle: 'You know healthy and junk food!',
+    celebrationSubtitle:
+        content.celebrationSubtitle ?? "You're Becoming a Super Sorter!",
     starsPerCorrectSort: 10,
     coinsPerCorrectSort: 10,
     celebrateEveryN: 5,
@@ -39,18 +41,8 @@ Future<void> openHealthyFoodGame(BuildContext context) async {
     foodBubbleShape: true,
     toddlerZones: true,
     wrongDropMessage: 'Not this one!',
-    correctCategoryLabels: {
-      HealthyFoodData.healthyCategoryId:
-          HealthyFoodData.resultLabelFor(HealthyFoodData.healthyCategoryId),
-      HealthyFoodData.junkCategoryId:
-          HealthyFoodData.resultLabelFor(HealthyFoodData.junkCategoryId),
-    },
-    categoryVoiceLabels: {
-      HealthyFoodData.healthyCategoryId:
-          HealthyFoodData.categoryLabelFor(HealthyFoodData.healthyCategoryId),
-      HealthyFoodData.junkCategoryId:
-          HealthyFoodData.categoryLabelFor(HealthyFoodData.junkCategoryId),
-    },
+    correctCategoryLabels: content.correctLabels,
+    categoryVoiceLabels: content.voiceLabels,
     soundEnabled: c.soundEnabled,
     musicEnabled: c.musicEnabled,
     coinRewardsEnabled: c.coinRewardsEnabled,
@@ -66,7 +58,7 @@ Future<void> openHealthyFoodGame(BuildContext context) async {
       builder: (_) => SortingPlayScreen(
         config: config,
         background: const AppBackground(),
-        title: 'Learn to Sort',
+        title: content.playTitle,
       ),
     ),
   );

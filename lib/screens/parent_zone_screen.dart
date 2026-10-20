@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../data/color_school_bags_data.dart';
-import '../data/flower_garden_data.dart';
 import '../data/game_catalog.dart';
-import '../data/sort_socks_data.dart';
+import '../domain/entities/game_content.dart';
+import '../presentation/providers/game_library.dart';
 import '../models/age_world.dart';
 import '../models/game_modes.dart';
 import '../models/rewards.dart';
@@ -310,6 +309,12 @@ class _ParentDashboardState extends State<_ParentDashboard> {
     if (id != null) _expanded.add(id);
   }
 
+  GameContent _content(String gameId) =>
+      context.read<GameLibrary>().content(gameId);
+
+  List<String> _modeLabels(String gameId) =>
+      [for (final mode in _content(gameId).modes) mode.label];
+
   String _playsLabel(AppState app, String gameId) {
     if (app.settings.isPremium) return 'Unlimited today';
     final n = app.playsTodayFor(gameId);
@@ -322,7 +327,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
     final app = context.watch<AppState>();
     final gs = app.gameSettings;
     final isPremium = app.settings.isPremium;
-    final games = GameCatalog.withParentControls;
+    final games = context.read<GameLibrary>().gamesWithParentControls;
 
     return GradientScaffold(
       child: SafeArea(
@@ -472,7 +477,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           speed: s.speed,
           floatingAnimation: s.floatingAnimation,
           modeLabel: 'Sort mode',
-          modeOptions: const ['Mixed', 'Fruits only', 'Vegetables only'],
+          modeOptions: _modeLabels(GameCatalog.fruitVegId),
           selectedModeIndex: FruitVegMode.values.indexOf(s.mode),
           onCommonChanged: (c) =>
               store.patchFruitVeg((x) => x.copyWith(common: c)),
@@ -493,7 +498,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           speed: s.speed,
           floatingAnimation: s.floatingAnimation,
           modeLabel: 'Sort mode',
-          modeOptions: const ['Mixed', 'Indoor only', 'Outdoor only'],
+          modeOptions: _modeLabels(GameCatalog.indoorOutdoorId),
           selectedModeIndex: IndoorOutdoorMode.values.indexOf(s.mode),
           onCommonChanged: (c) =>
               store.patchIndoorOutdoor((x) => x.copyWith(common: c)),
@@ -517,7 +522,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           speed: s.speed,
           floatingAnimation: s.floatingAnimation,
           modeLabel: 'Color mode',
-          modeOptions: const ['Mixed', 'Red only', 'Blue only', 'Green only'],
+          modeOptions: _modeLabels(GameCatalog.colorSortId),
           selectedModeIndex: ColorSortMode.values.indexOf(s.mode),
           onCommonChanged: (c) =>
               store.patchColorSort((x) => x.copyWith(common: c)),
@@ -539,7 +544,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           speed: s.speed,
           floatingAnimation: s.floatingAnimation,
           modeLabel: 'Size mode',
-          modeOptions: const ['Mixed', 'Big only', 'Small only'],
+          modeOptions: _modeLabels(GameCatalog.bigSmallId),
           selectedModeIndex: BigSmallMode.values.indexOf(s.mode),
           onCommonChanged: (c) =>
               store.patchBigSmall((x) => x.copyWith(common: c)),
@@ -557,19 +562,18 @@ class _ParentDashboardState extends State<_ParentDashboard> {
         final s = store.colorSchoolBags;
         return MatchColorControls(
           common: s.common,
-          difficultyLabels: const [
-            'Level 1 · 2 backpacks',
-            'Level 2 · 3 backpacks',
-            'Level 3 · 4 backpacks',
-            'Advanced · 5 backpacks',
-            'Advanced · 6 backpacks',
+          difficultyLabels: [
+            for (final level in _content(GameCatalog.colorSchoolBagsId).difficulties)
+              level.label,
           ],
           selectedDifficultyIndex:
               ColorSchoolBagsDifficulty.values.indexOf(s.difficulty),
-          colorIds: ColorSchoolBagsData.allColorIds,
-          colorLabels: ColorSchoolBagsData.allColorIds
-              .map(ColorSchoolBagsData.displayName)
-              .toList(),
+          colorIds: _content(GameCatalog.colorSchoolBagsId).pools.allSelectableIds,
+          colorLabels: [
+            for (final id
+                in _content(GameCatalog.colorSchoolBagsId).pools.allSelectableIds)
+              _content(GameCatalog.colorSchoolBagsId).displayName(id),
+          ],
           enabledColors: s.enabledColors,
           minColors: 2,
           onCommonChanged: (c) =>
@@ -585,18 +589,17 @@ class _ParentDashboardState extends State<_ParentDashboard> {
         final s = store.sortSocks;
         return MatchColorControls(
           common: s.common,
-          difficultyLabels: const [
-            'Level 1 · 2 laundry bags',
-            'Level 2 · 3 laundry bags',
-            'Level 3 · 4 laundry bags',
-            'Advanced · 5 laundry bags',
-            'Advanced · 6 laundry bags',
+          difficultyLabels: [
+            for (final level in _content(GameCatalog.sortSocksId).difficulties)
+              level.label,
           ],
           selectedDifficultyIndex:
               SortSocksDifficulty.values.indexOf(s.difficulty),
-          colorIds: SortSocksData.allColorIds,
-          colorLabels:
-              SortSocksData.allColorIds.map(SortSocksData.displayName).toList(),
+          colorIds: _content(GameCatalog.sortSocksId).pools.allSelectableIds,
+          colorLabels: [
+            for (final id in _content(GameCatalog.sortSocksId).pools.allSelectableIds)
+              _content(GameCatalog.sortSocksId).displayName(id),
+          ],
           enabledColors: s.enabledColors,
           minColors: 2,
           onCommonChanged: (c) =>
@@ -611,18 +614,18 @@ class _ParentDashboardState extends State<_ParentDashboard> {
         final s = store.flowerGarden;
         return MatchColorControls(
           common: s.common,
-          difficultyLabels: const [
-            'Level 1 · 2 colors',
-            'Level 2 · 3 colors',
-            'Level 3 · 4 colors',
-            'Level 4 · 5 colors',
+          difficultyLabels: [
+            for (final level in _content(GameCatalog.flowerGardenId).difficulties)
+              level.label,
           ],
           selectedDifficultyIndex:
               FlowerGardenDifficulty.values.indexOf(s.difficulty),
-          colorIds: FlowerGardenData.allColorIds,
-          colorLabels: FlowerGardenData.allColorIds
-              .map(FlowerGardenData.displayName)
-              .toList(),
+          colorIds: _content(GameCatalog.flowerGardenId).pools.allSelectableIds,
+          colorLabels: [
+            for (final id
+                in _content(GameCatalog.flowerGardenId).pools.allSelectableIds)
+              _content(GameCatalog.flowerGardenId).displayName(id),
+          ],
           enabledColors: s.enabledColors,
           minColors: 2,
           onCommonChanged: (c) =>
@@ -639,6 +642,26 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           settings: store.healthyFood,
           onChanged: (next) => store.patchHealthyFood((_) => next),
         );
+      case GameCatalog.animalSortId:
+        final pet = store.petWild;
+        return FloatingSortControls(
+          common: pet.common,
+          floatingItemCount: pet.floatingItemCount,
+          speed: pet.speed,
+          floatingAnimation: pet.floatingAnimation,
+          modeLabel: 'Animal mode',
+          modeOptions: _modeLabels(GameCatalog.animalSortId),
+          selectedModeIndex: PetWildMode.values.indexOf(pet.mode),
+          onCommonChanged: (c) => store.patchPetWild((x) => x.copyWith(common: c)),
+          onFloatingCountChanged: (n) =>
+              store.patchPetWild((x) => x.copyWith(floatingItemCount: n)),
+          onSpeedChanged: (sp) => store.patchPetWild((x) => x.copyWith(speed: sp)),
+          onFloatingAnimationChanged: (v) =>
+              store.patchPetWild((x) => x.copyWith(floatingAnimation: v)),
+          onModeIndexChanged: (i) => store.patchPetWild(
+            (x) => x.copyWith(mode: PetWildMode.values[i]),
+          ),
+        );
       case GameCatalog.cleanDirtyId:
         final s = store.cleanDirty;
         return FloatingSortControls(
@@ -649,7 +672,7 @@ class _ParentDashboardState extends State<_ParentDashboard> {
           minFloating: 3,
           maxFloating: 8,
           modeLabel: 'Clothes mode',
-          modeOptions: const ['Mixed', 'Clean only', 'Dirty only'],
+          modeOptions: _modeLabels(GameCatalog.cleanDirtyId),
           selectedModeIndex: CleanDirtyMode.values.indexOf(s.mode),
           onCommonChanged: (c) =>
               store.patchCleanDirty((x) => x.copyWith(common: c)),

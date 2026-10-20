@@ -1,0 +1,361 @@
+{
+  "gameId": "clean_dirty_sort",
+  "playTitle": "Clean & Dirty Clothes",
+  "categories": [
+    {
+      "id": "dirty",
+      "label": "Washing Machine",
+      "emoji": "🫧",
+      "color": 4283417591,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "clean",
+      "label": "Cupboard",
+      "emoji": "🚪",
+      "color": 4294948685,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "clean_tshirt",
+      "name": "T-Shirt",
+      "emoji": "👕",
+      "categoryId": "clean",
+      "voiceName": "Clean T-Shirt",
+      "accentColor": 4282557941
+    },
+    {
+      "id": "clean_shirt",
+      "name": "Shirt",
+      "emoji": "👔",
+      "categoryId": "clean",
+      "voiceName": "Clean Shirt",
+      "accentColor": 4293673082
+    },
+    {
+      "id": "clean_polo",
+      "name": "Polo Shirt",
+      "emoji": "👕",
+      "categoryId": "clean",
+      "voiceName": "Clean Polo",
+      "accentColor": 4284922730
+    },
+    {
+      "id": "clean_skirt",
+      "name": "Skirt",
+      "emoji": "👗",
+      "categoryId": "clean",
+      "voiceName": "Clean Skirt",
+      "accentColor": 4289415100
+    },
+    {
+      "id": "clean_shorts",
+      "name": "Shorts",
+      "emoji": "🩳",
+      "categoryId": "clean",
+      "voiceName": "Clean Shorts",
+      "accentColor": 4294944550
+    },
+    {
+      "id": "clean_trousers",
+      "name": "Trousers",
+      "emoji": "👖",
+      "categoryId": "clean",
+      "voiceName": "Clean Trousers",
+      "accentColor": 4284246976
+    },
+    {
+      "id": "clean_jeans",
+      "name": "Jeans",
+      "emoji": "👖",
+      "categoryId": "clean",
+      "voiceName": "Clean Jeans",
+      "accentColor": 4281944491
+    },
+    {
+      "id": "clean_socks",
+      "name": "Socks",
+      "emoji": "🧦",
+      "categoryId": "clean",
+      "voiceName": "Clean Socks",
+      "accentColor": 4293874512
+    },
+    {
+      "id": "clean_hanky",
+      "name": "Handkerchief",
+      "emoji": "🧻",
+      "categoryId": "clean",
+      "voiceName": "Clean Handkerchief",
+      "accentColor": 4294962776
+    },
+    {
+      "id": "clean_dress",
+      "name": "Dress",
+      "emoji": "👗",
+      "categoryId": "clean",
+      "voiceName": "Clean Dress",
+      "accentColor": 4294934699
+    },
+    {
+      "id": "clean_jacket",
+      "name": "Jacket",
+      "emoji": "🧥",
+      "categoryId": "clean",
+      "voiceName": "Clean Jacket",
+      "accentColor": 4280723098
+    },
+    {
+      "id": "clean_sweater",
+      "name": "Sweater",
+      "emoji": "🧶",
+      "categoryId": "clean",
+      "voiceName": "Clean Sweater",
+      "accentColor": 4287458915
+    },
+    {
+      "id": "clean_hoodie",
+      "name": "Hoodie",
+      "emoji": "🧥",
+      "categoryId": "clean",
+      "voiceName": "Clean Hoodie",
+      "accentColor": 4286470082
+    },
+    {
+      "id": "clean_pajamas",
+      "name": "Pajamas",
+      "emoji": "🛌",
+      "categoryId": "clean",
+      "voiceName": "Clean Pajamas",
+      "accentColor": 4280923894
+    },
+    {
+      "id": "clean_baby",
+      "name": "Baby Clothes",
+      "emoji": "👶",
+      "categoryId": "clean",
+      "voiceName": "Clean Baby Clothes",
+      "accentColor": 4294954112
+    },
+    {
+      "id": "clean_towel",
+      "name": "Towel",
+      "emoji": "🛁",
+      "categoryId": "clean",
+      "voiceName": "Clean Towel",
+      "accentColor": 4286630852
+    },
+    {
+      "id": "clean_cap",
+      "name": "Cap",
+      "emoji": "🧢",
+      "categoryId": "clean",
+      "voiceName": "Clean Cap",
+      "accentColor": 4293880832
+    },
+    {
+      "id": "clean_mittens",
+      "name": "Mittens",
+      "emoji": "🧤",
+      "categoryId": "clean",
+      "voiceName": "Clean Mittens",
+      "accentColor": 4293227379
+    },
+    {
+      "id": "dirty_tshirt",
+      "name": "T-Shirt",
+      "emoji": "👕",
+      "categoryId": "dirty",
+      "voiceName": "Dirty T-Shirt",
+      "accentColor": 4287679225
+    },
+    {
+      "id": "dirty_shirt",
+      "name": "Shirt",
+      "emoji": "👔",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Shirt",
+      "accentColor": 4294217649
+    },
+    {
+      "id": "dirty_polo",
+      "name": "Polo Shirt",
+      "emoji": "👕",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Polo",
+      "accentColor": 4289058471
+    },
+    {
+      "id": "dirty_skirt",
+      "name": "Skirt",
+      "emoji": "👗",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Skirt",
+      "accentColor": 4291728344
+    },
+    {
+      "id": "dirty_shorts",
+      "name": "Shorts",
+      "emoji": "🩳",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Shorts",
+      "accentColor": 4294954112
+    },
+    {
+      "id": "dirty_trousers",
+      "name": "Trousers",
+      "emoji": "👖",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Trousers",
+      "accentColor": 4288653530
+    },
+    {
+      "id": "dirty_jeans",
+      "name": "Jeans",
+      "emoji": "👖",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Jeans",
+      "accentColor": 4286154443
+    },
+    {
+      "id": "dirty_socks",
+      "name": "Socks",
+      "emoji": "🧦",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Socks",
+      "accentColor": 4293892762
+    },
+    {
+      "id": "dirty_hanky",
+      "name": "Handkerchief",
+      "emoji": "🧻",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Handkerchief",
+      "accentColor": 4294964637
+    },
+    {
+      "id": "dirty_dress",
+      "name": "Dress",
+      "emoji": "👗",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Dress",
+      "accentColor": 4294491088
+    },
+    {
+      "id": "dirty_jacket",
+      "name": "Jacket",
+      "emoji": "🧥",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Jacket",
+      "accentColor": 4286630852
+    },
+    {
+      "id": "dirty_sweater",
+      "name": "Sweater",
+      "emoji": "🧶",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Sweater",
+      "accentColor": 4290554532
+    },
+    {
+      "id": "dirty_hoodie",
+      "name": "Hoodie",
+      "emoji": "🧥",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Hoodie",
+      "accentColor": 4289961435
+    },
+    {
+      "id": "dirty_pajamas",
+      "name": "Pajamas",
+      "emoji": "🛌",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Pajamas",
+      "accentColor": 4286698746
+    },
+    {
+      "id": "dirty_baby",
+      "name": "Baby Clothes",
+      "emoji": "👶",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Baby Clothes",
+      "accentColor": 4294959282
+    },
+    {
+      "id": "dirty_towel",
+      "name": "Towel",
+      "emoji": "🛁",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Towel",
+      "accentColor": 4289912795
+    },
+    {
+      "id": "dirty_cap",
+      "name": "Cap",
+      "emoji": "🧢",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Cap",
+      "accentColor": 4294948685
+    },
+    {
+      "id": "dirty_mittens",
+      "name": "Mittens",
+      "emoji": "🧤",
+      "categoryId": "dirty",
+      "voiceName": "Dirty Mittens",
+      "accentColor": 4293892762
+    }
+  ],
+  "celebrationSubtitle": "You're a Laundry Superstar!",
+  "modes": [
+    {
+      "id": "mixed",
+      "label": "Mixed",
+      "categoryIds": [
+        "dirty",
+        "clean"
+      ]
+    },
+    {
+      "id": "cleanOnly",
+      "label": "Clean only",
+      "categoryIds": [
+        "clean"
+      ]
+    },
+    {
+      "id": "dirtyOnly",
+      "label": "Dirty only",
+      "categoryIds": [
+        "dirty"
+      ]
+    }
+  ],
+  "feedback": {
+    "correctLabels": {
+      "dirty": "All Clean!",
+      "clean": "Neatly Stored!"
+    },
+    "voiceLabels": {
+      "dirty": "Into the wash!",
+      "clean": "Into the cupboard!"
+    },
+    "encouragements": [
+      "Great Job!",
+      "Wonderful!",
+      "Fantastic!",
+      "Amazing!",
+      "Excellent!",
+      "Nice Sorting!",
+      "Super Helper!",
+      "You're Amazing!",
+      "Awesome!",
+      "Laundry Hero!",
+      "Sparkling Clean!",
+      "Keep Going!",
+      "Brilliant!",
+      "Perfect Choice!"
+    ]
+  }
+}

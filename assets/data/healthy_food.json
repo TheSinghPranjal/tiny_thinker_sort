@@ -1,0 +1,302 @@
+{
+  "gameId": "healthy_junk_food_sort",
+  "playTitle": "Learn to Sort",
+  "categories": [
+    {
+      "id": "healthy",
+      "label": "Healthy Food",
+      "emoji": "🥦",
+      "color": 4284922730,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "junk",
+      "label": "Junk Food",
+      "emoji": "🍔",
+      "color": 4294930499,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "apple",
+      "name": "Apple",
+      "emoji": "🍎",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "banana",
+      "name": "Banana",
+      "emoji": "🍌",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "strawberry",
+      "name": "Strawberry",
+      "emoji": "🍓",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "grapes",
+      "name": "Grapes",
+      "emoji": "🍇",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "carrot",
+      "name": "Carrot",
+      "emoji": "🥕",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "broccoli",
+      "name": "Broccoli",
+      "emoji": "🥦",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "cucumber",
+      "name": "Cucumber",
+      "emoji": "🥒",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "orange",
+      "name": "Orange",
+      "emoji": "🍊",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "mango",
+      "name": "Mango",
+      "emoji": "🥭",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "watermelon",
+      "name": "Watermelon",
+      "emoji": "🍉",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "pineapple",
+      "name": "Pineapple",
+      "emoji": "🍍",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "lettuce",
+      "name": "Lettuce",
+      "emoji": "🥬",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "kiwi",
+      "name": "Kiwi",
+      "emoji": "🥝",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "corn",
+      "name": "Corn",
+      "emoji": "🌽",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "potato",
+      "name": "Potato",
+      "emoji": "🥔",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "pear",
+      "name": "Pear",
+      "emoji": "🍐",
+      "categoryId": "healthy"
+    },
+    {
+      "id": "burger",
+      "name": "Burger",
+      "emoji": "🍔",
+      "categoryId": "junk"
+    },
+    {
+      "id": "pizza",
+      "name": "Pizza",
+      "emoji": "🍕",
+      "categoryId": "junk"
+    },
+    {
+      "id": "fries",
+      "name": "French Fries",
+      "emoji": "🍟",
+      "categoryId": "junk",
+      "voiceName": "Fries"
+    },
+    {
+      "id": "hot_dog",
+      "name": "Hot Dog",
+      "emoji": "🌭",
+      "categoryId": "junk"
+    },
+    {
+      "id": "donut",
+      "name": "Donut",
+      "emoji": "🍩",
+      "categoryId": "junk"
+    },
+    {
+      "id": "cookie",
+      "name": "Cookie",
+      "emoji": "🍪",
+      "categoryId": "junk"
+    },
+    {
+      "id": "chocolate",
+      "name": "Chocolate",
+      "emoji": "🍫",
+      "categoryId": "junk"
+    },
+    {
+      "id": "cake",
+      "name": "Cake",
+      "emoji": "🍰",
+      "categoryId": "junk"
+    },
+    {
+      "id": "noodles",
+      "name": "Instant Noodles",
+      "emoji": "🍜",
+      "categoryId": "junk",
+      "voiceName": "Noodles"
+    },
+    {
+      "id": "soda",
+      "name": "Soda",
+      "emoji": "🥤",
+      "categoryId": "junk"
+    },
+    {
+      "id": "candy",
+      "name": "Candy",
+      "emoji": "🍭",
+      "categoryId": "junk"
+    },
+    {
+      "id": "cupcake",
+      "name": "Cupcake",
+      "emoji": "🧁",
+      "categoryId": "junk"
+    },
+    {
+      "id": "lollipop",
+      "name": "Lollipop",
+      "emoji": "🍬",
+      "categoryId": "junk"
+    },
+    {
+      "id": "popcorn",
+      "name": "Popcorn",
+      "emoji": "🍿",
+      "categoryId": "junk"
+    }
+  ],
+  "celebrationSubtitle": "You know healthy and junk food!",
+  "difficulties": [
+    {
+      "id": "beginner",
+      "label": "Beginner · Apple, Banana, Burger, Pizza",
+      "healthyCount": 2,
+      "junkCount": 2,
+      "useBeginnerSet": true
+    },
+    {
+      "id": "easy",
+      "label": "Easy · 6 foods",
+      "healthyCount": 3,
+      "junkCount": 3
+    },
+    {
+      "id": "medium",
+      "label": "Medium · 10 foods",
+      "healthyCount": 5,
+      "junkCount": 5
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced · all enabled foods"
+    }
+  ],
+  "pools": {
+    "beginnerItemIds": [
+      "apple",
+      "banana",
+      "burger",
+      "pizza"
+    ],
+    "defaultEnabledHealthyIds": [
+      "apple",
+      "banana",
+      "carrot",
+      "broccoli",
+      "grapes",
+      "orange",
+      "mango",
+      "watermelon"
+    ],
+    "defaultEnabledJunkIds": [
+      "burger",
+      "pizza",
+      "fries",
+      "donut",
+      "soda",
+      "chocolate",
+      "noodles",
+      "cake"
+    ],
+    "allHealthyIds": [
+      "apple",
+      "banana",
+      "strawberry",
+      "grapes",
+      "carrot",
+      "broccoli",
+      "cucumber",
+      "orange",
+      "mango",
+      "watermelon",
+      "pineapple",
+      "lettuce",
+      "kiwi",
+      "corn",
+      "potato",
+      "pear"
+    ],
+    "allJunkIds": [
+      "burger",
+      "pizza",
+      "fries",
+      "hot_dog",
+      "donut",
+      "cookie",
+      "chocolate",
+      "cake",
+      "noodles",
+      "soda",
+      "candy",
+      "cupcake",
+      "lollipop",
+      "popcorn"
+    ]
+  },
+  "feedback": {
+    "correctLabels": {
+      "healthy": "HEALTHY!",
+      "junk": "JUNK FOOD"
+    },
+    "voiceLabels": {
+      "healthy": "Healthy Food!",
+      "junk": "Junk Food!"
+    }
+  }
+}

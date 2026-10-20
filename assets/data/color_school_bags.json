@@ -1,0 +1,351 @@
+{
+  "gameId": "color_school_bags",
+  "playTitle": "Color School Bags",
+  "categories": [
+    {
+      "id": "red",
+      "label": "Red",
+      "emoji": "🎒",
+      "color": 4293212469,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "blue",
+      "label": "Blue",
+      "emoji": "🎒",
+      "color": 4280191205,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "green",
+      "label": "Green",
+      "emoji": "🎒",
+      "color": 4282622023,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "yellow",
+      "label": "Yellow",
+      "emoji": "🎒",
+      "color": 4294826037,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "orange",
+      "label": "Orange",
+      "emoji": "🎒",
+      "color": 4294675456,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "pink",
+      "label": "Pink",
+      "emoji": "🎒",
+      "color": 4293673082,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "purple",
+      "label": "Purple",
+      "emoji": "🎒",
+      "color": 4287505578,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "brown",
+      "label": "Brown",
+      "emoji": "🎒",
+      "color": 4285353025,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "grey",
+      "label": "Grey",
+      "emoji": "🎒",
+      "color": 4286091420,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "black",
+      "label": "Black",
+      "emoji": "🎒",
+      "color": 4281812815,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "white",
+      "label": "White",
+      "emoji": "🎒",
+      "color": 4293718001,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "sky_blue",
+      "label": "Sky Blue",
+      "emoji": "🎒",
+      "color": 4283417591,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "navy",
+      "label": "Navy",
+      "emoji": "🎒",
+      "color": 4279592384,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "light_blue",
+      "label": "Light Blue",
+      "emoji": "🎒",
+      "color": 4286698746,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "light_green",
+      "label": "Light Green",
+      "emoji": "🎒",
+      "color": 4286695300,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "magenta",
+      "label": "Magenta",
+      "emoji": "🎒",
+      "color": 4292352864,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "lilac",
+      "label": "Lilac",
+      "emoji": "🎒",
+      "color": 4291728344,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "silver",
+      "label": "Silver",
+      "emoji": "🎒",
+      "color": 4289773253,
+      "zoneStyle": "basket"
+    },
+    {
+      "id": "gold",
+      "label": "Gold",
+      "emoji": "🎒",
+      "color": 4294956367,
+      "zoneStyle": "basket"
+    }
+  ],
+  "items": [
+    {
+      "id": "book_red",
+      "name": "Red Book",
+      "emoji": "📕",
+      "categoryId": "red",
+      "voiceName": "Red",
+      "accentColor": 4293212469
+    },
+    {
+      "id": "book_blue",
+      "name": "Blue Book",
+      "emoji": "📘",
+      "categoryId": "blue",
+      "voiceName": "Blue",
+      "accentColor": 4280191205
+    },
+    {
+      "id": "book_green",
+      "name": "Green Book",
+      "emoji": "📗",
+      "categoryId": "green",
+      "voiceName": "Green",
+      "accentColor": 4282622023
+    },
+    {
+      "id": "book_yellow",
+      "name": "Yellow Book",
+      "emoji": "📒",
+      "categoryId": "yellow",
+      "voiceName": "Yellow",
+      "accentColor": 4294826037
+    },
+    {
+      "id": "book_orange",
+      "name": "Orange Book",
+      "emoji": "📙",
+      "categoryId": "orange",
+      "voiceName": "Orange",
+      "accentColor": 4294675456
+    },
+    {
+      "id": "book_pink",
+      "name": "Pink Book",
+      "emoji": "🌸",
+      "categoryId": "pink",
+      "voiceName": "Pink",
+      "accentColor": 4293673082
+    },
+    {
+      "id": "book_purple",
+      "name": "Purple Book",
+      "emoji": "💜",
+      "categoryId": "purple",
+      "voiceName": "Purple",
+      "accentColor": 4287505578
+    },
+    {
+      "id": "book_brown",
+      "name": "Brown Book",
+      "emoji": "🤎",
+      "categoryId": "brown",
+      "voiceName": "Brown",
+      "accentColor": 4285353025
+    },
+    {
+      "id": "book_grey",
+      "name": "Grey Book",
+      "emoji": "🩶",
+      "categoryId": "grey",
+      "voiceName": "Grey",
+      "accentColor": 4286091420
+    },
+    {
+      "id": "book_black",
+      "name": "Black Book",
+      "emoji": "⚫",
+      "categoryId": "black",
+      "voiceName": "Black",
+      "accentColor": 4281812815
+    },
+    {
+      "id": "book_white",
+      "name": "White Book",
+      "emoji": "⚪",
+      "categoryId": "white",
+      "voiceName": "White",
+      "accentColor": 4293718001
+    },
+    {
+      "id": "book_sky_blue",
+      "name": "Sky Blue Book",
+      "emoji": "🩵",
+      "categoryId": "sky_blue",
+      "voiceName": "Sky Blue",
+      "accentColor": 4283417591
+    },
+    {
+      "id": "book_navy",
+      "name": "Navy Book",
+      "emoji": "🔵",
+      "categoryId": "navy",
+      "voiceName": "Navy",
+      "accentColor": 4279592384
+    },
+    {
+      "id": "book_light_blue",
+      "name": "Light Blue Book",
+      "emoji": "🔷",
+      "categoryId": "light_blue",
+      "voiceName": "Light Blue",
+      "accentColor": 4286698746
+    },
+    {
+      "id": "book_light_green",
+      "name": "Light Green Book",
+      "emoji": "🟢",
+      "categoryId": "light_green",
+      "voiceName": "Light Green",
+      "accentColor": 4286695300
+    },
+    {
+      "id": "book_magenta",
+      "name": "Magenta Book",
+      "emoji": "💖",
+      "categoryId": "magenta",
+      "voiceName": "Magenta",
+      "accentColor": 4292352864
+    },
+    {
+      "id": "book_lilac",
+      "name": "Lilac Book",
+      "emoji": "💜",
+      "categoryId": "lilac",
+      "voiceName": "Lilac",
+      "accentColor": 4291728344
+    },
+    {
+      "id": "book_silver",
+      "name": "Silver Book",
+      "emoji": "🥈",
+      "categoryId": "silver",
+      "voiceName": "Silver",
+      "accentColor": 4289773253
+    },
+    {
+      "id": "book_gold",
+      "name": "Gold Book",
+      "emoji": "🥇",
+      "categoryId": "gold",
+      "voiceName": "Gold",
+      "accentColor": 4294956367
+    }
+  ],
+  "celebrationSubtitle": "You're learning colors!",
+  "categoryEmoji": "🎒",
+  "difficulties": [
+    {
+      "id": "level2",
+      "label": "Level 1 · 2 backpacks",
+      "count": 2
+    },
+    {
+      "id": "level3",
+      "label": "Level 2 · 3 backpacks",
+      "count": 3
+    },
+    {
+      "id": "level4",
+      "label": "Level 3 · 4 backpacks",
+      "count": 4
+    },
+    {
+      "id": "level5",
+      "label": "Advanced · 5 backpacks",
+      "count": 5
+    },
+    {
+      "id": "level6",
+      "label": "Advanced · 6 backpacks",
+      "count": 6
+    }
+  ],
+  "pools": {
+    "defaultEnabledIds": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "allSelectableIds": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "orange",
+      "pink",
+      "purple",
+      "brown",
+      "grey",
+      "black",
+      "white",
+      "sky_blue",
+      "navy",
+      "light_blue",
+      "light_green",
+      "magenta",
+      "lilac",
+      "silver",
+      "gold"
+    ]
+  }
+}
